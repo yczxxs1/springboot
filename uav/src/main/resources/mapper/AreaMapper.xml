@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.google.business.dao.AreaDAO">
+  <resultMap id="BaseResultMap" type="Area">
+    <id column="AREA_ID" jdbcType="VARCHAR" property="areaId" />
+    <result column="AREA_NAME" jdbcType="VARCHAR" property="areaName" />
+    <result column="AREA_FATHER_ID" jdbcType="VARCHAR" property="areaFatherId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    AREA_ID, AREA_NAME, AREA_FATHER_ID
+  </sql>
+  <select id="selectByPrimaryKey"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from AREA
+    where AREA_ID = #{areaId,jdbcType=VARCHAR}
+  </select>
+  
+   <select id="selectAll"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from AREA
+     where AREA_FATHER_ID = #{areaFatherId,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from AREA
+    where AREA_ID = #{areaId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="Area">
+    insert into AREA (AREA_ID, AREA_NAME, AREA_FATHER_ID
+      )
+    values (#{areaId,jdbcType=VARCHAR}, #{areaName,jdbcType=VARCHAR}, #{areaFatherId,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="Area">
+    insert into AREA
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="areaId != null">
+        AREA_ID,
+      </if>
+      <if test="areaName != null">
+        AREA_NAME,
+      </if>
+      <if test="areaFatherId != null">
+        AREA_FATHER_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="areaId != null">
+        #{areaId,jdbcType=VARCHAR},
+      </if>
+      <if test="areaName != null">
+        #{areaName,jdbcType=VARCHAR},
+      </if>
+      <if test="areaFatherId != null">
+        #{areaFatherId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="Area">
+    update AREA
+    <set>
+      <if test="areaName != null">
+        AREA_NAME = #{areaName,jdbcType=VARCHAR},
+      </if>
+      <if test="areaFatherId != null">
+        AREA_FATHER_ID = #{areaFatherId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where AREA_ID = #{areaId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="Area">
+    update AREA
+    set AREA_NAME = #{areaName,jdbcType=VARCHAR},
+      AREA_FATHER_ID = #{areaFatherId,jdbcType=VARCHAR}
+    where AREA_ID = #{areaId,jdbcType=VARCHAR}
+  </update>
+</mapper>

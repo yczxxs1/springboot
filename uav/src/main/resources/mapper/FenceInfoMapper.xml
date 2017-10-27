@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.google.business.dao.FenceInfoDAO">
+  <resultMap id="BaseResultMap" type="FenceInfo">
+    <id column="FID" jdbcType="VARCHAR" property="fid" />
+    <result column="FENCEID" jdbcType="INTEGER" property="fenceid" />
+    <result column="MONITED_PERSON" jdbcType="VARCHAR" property="monitedPerson" />
+    <result column="FENCE_NAME" jdbcType="VARCHAR" property="fenceName" />
+    <result column="FENCE_START" jdbcType="VARCHAR" property="fenceStart" />
+    <result column="FENCE_END" jdbcType="VARCHAR" property="fenceEnd" />
+    <result column="FENCE_HEIGHT" jdbcType="INTEGER" property="fenceHeight" />
+    <result column="FENCE_TYPE" jdbcType="VARCHAR" property="fenceType" />
+    <result column="FENCE_TYPE_NAME" jdbcType="VARCHAR" property="fenceTypeName" />
+    <result column="DISTANCE" jdbcType="VARCHAR" property="distance"/>
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    FID, FENCEID, MONITED_PERSON, FENCE_NAME, FENCE_START, FENCE_END, FENCE_HEIGHT, FENCE_TYPE,
+    (SELECT FENCE_TYPE_NAME FROM FENCETYPE WHERE FENCE_TYPE_ID=FENCE_TYPE) AS FENCE_TYPE_NAME
+  </sql>
+  
+  <select id="selectFenceInfo" parameterType="FenceInfo" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from FENCEINFO
+    <where>
+    <if test="fid != null">
+        AND FID = #{fid,jdbcType=VARCHAR}
+      </if>
+      <if test="fenceid != null">
+        AND FENCEID = #{fenceid,jdbcType=INTEGER}
+      </if>
+      
+      <if test="monitedPerson != null">
+        AND MONITED_PERSON = #{monitedPerson,jdbcType=VARCHAR}
+      </if>
+    </where>
+    
+  </select>
+  
+  <select id="selectFenceInfo_monited_person" parameterType="FenceInfo" resultMap="BaseResultMap">
+    select 
+      distinct monited_person
+    from FENCEINFO 
+    where monited_person!='0'
+  </select>
+  
+  
+  
+  <delete id="deleteFenceInfo" parameterType="java.lang.String">
+    delete from FENCEINFO
+    where FID = #{fid,jdbcType=VARCHAR}
+  </delete>
+  
+  
+  
+  <insert id="insertFenceInfo" parameterType="FenceInfo">
+    insert into FENCEINFO
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="fid != null">
+        FID,
+      </if>
+      <if test="fenceid != null">
+        FENCEID,
+      </if>
+      <if test="monitedPerson != null">
+        MONITED_PERSON,
+      </if>
+      <if test="fenceName != null">
+        FENCE_NAME,
+      </if>
+      <if test="fenceStart != null">
+        FENCE_START,
+      </if>
+      <if test="fenceEnd != null">
+        FENCE_END,
+      </if>
+      <if test="fenceHeight != null">
+        FENCE_HEIGHT,
+      </if>
+      <if test="fenceType != null">
+        FENCE_TYPE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="fid != null">
+        #{fid,jdbcType=VARCHAR},
+      </if>
+      <if test="fenceid != null">
+        #{fenceid,jdbcType=INTEGER},
+      </if>
+      <if test="monitedPerson != null">
+        #{monitedPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="fenceName != null">
+        #{fenceName,jdbcType=VARCHAR},
+      </if>
+      <if test="fenceStart != null">
+        #{fenceStart,jdbcType=VARCHAR},
+      </if>
+      <if test="fenceEnd != null">
+        #{fenceEnd,jdbcType=VARCHAR},
+      </if>
+      <if test="fenceHeight != null">
+        #{fenceHeight,jdbcType=INTEGER},
+      </if>
+      <if test="fenceType != null">
+        #{fenceType,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateFenceInfo" parameterType="FenceInfo">
+    update FENCEINFO
+    <set>
+      <if test="fenceid != null">
+        FENCEID = #{fenceid,jdbcType=INTEGER},
+      </if>
+      <if test="monitedPerson != null">
+        MONITED_PERSON = #{monitedPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="fenceName != null">
+        FENCE_NAME = #{fenceName,jdbcType=VARCHAR},
+      </if>
+      <if test="fenceStart != null">
+        FENCE_START = #{fenceStart,jdbcType=VARCHAR},
+      </if>
+      <if test="fenceEnd != null">
+        FENCE_END = #{fenceEnd,jdbcType=VARCHAR},
+      </if>
+      <if test="fenceHeight != null">
+        FENCE_HEIGHT = #{fenceHeight,jdbcType=INTEGER},
+      </if>
+      <if test="fenceType != null">
+        FENCE_TYPE = #{fenceType,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where FID = #{fid,jdbcType=VARCHAR}
+  </update>
+  
+</mapper>

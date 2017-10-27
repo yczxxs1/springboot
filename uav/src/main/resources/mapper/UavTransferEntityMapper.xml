@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.google.business.dao.UavTransferDAO">
+  <resultMap id="BaseResultMap" type="UavTransferEntity">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="SN_NUMBER" jdbcType="VARCHAR" property="snNumber" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="CARD" jdbcType="VARCHAR" property="card" />
+    <result column="TEL" jdbcType="VARCHAR" property="tel" />
+    <result column="OWNER_NAME" jdbcType="VARCHAR" property="ownerName" />
+    <result column="OWNER_CARD" jdbcType="VARCHAR" property="ownerCard" />
+    <result column="TRANSFER_DATE" jdbcType="TIMESTAMP" property="transferDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID,SN_NUMBER, NAME, CARD, TEL, OWNER_NAME, OWNER_CARD, TRANSFER_DATE
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from UAV_TRANSFER
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from UAV_TRANSFER
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="UavTransferEntity">
+    insert into UAV_TRANSFER (ID, SN_NUMBER, NAME, 
+      CARD, TEL, OWNER_NAME, 
+      OWNER_CARD, TRANSFER_DATE)
+    values (#{id,jdbcType=VARCHAR}, #{snNumber,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{card,jdbcType=VARCHAR}, #{tel,jdbcType=VARCHAR}, #{ownerName,jdbcType=VARCHAR}, 
+      #{ownerCard,jdbcType=VARCHAR}, #{transferDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="UavTransferEntity" keyProperty="id" useGeneratedKeys="true">
+		<selectKey keyProperty="id" order="BEFORE" resultType="java.lang.String">
+			select sys_guid() from dual
+		</selectKey> 
+    insert into UAV_TRANSFER
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+        ID,
+      <if test="snNumber != null">
+        SN_NUMBER,
+      </if>
+      <if test="name != null">
+        NAME,
+      </if>
+      <if test="card != null">
+        CARD,
+      </if>
+      <if test="tel != null">
+        TEL,
+      </if>
+      <if test="ownerName != null">
+        OWNER_NAME,
+      </if>
+      <if test="ownerCard != null">
+        OWNER_CARD,
+      </if>
+      <if test="transferDate != null">
+        TRANSFER_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+		 #{id,jdbcType=VARCHAR},
+      <if test="snNumber != null">
+        #{snNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="card != null">
+        #{card,jdbcType=VARCHAR},
+      </if>
+      <if test="tel != null">
+        #{tel,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerName != null">
+        #{ownerName,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerCard != null">
+        #{ownerCard,jdbcType=VARCHAR},
+      </if>
+      <if test="transferDate != null">
+        #{transferDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="UavTransferEntity">
+    update UAV_TRANSFER
+    <set>
+      <if test="snNumber != null">
+        SN_NUMBER = #{snNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="card != null">
+        CARD = #{card,jdbcType=VARCHAR},
+      </if>
+      <if test="tel != null">
+        TEL = #{tel,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerName != null">
+        OWNER_NAME = #{ownerName,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerCard != null">
+        OWNER_CARD = #{ownerCard,jdbcType=VARCHAR},
+      </if>
+      <if test="transferDate != null">
+        TRANSFER_DATE = #{transferDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="UavTransferEntity">
+    update UAV_TRANSFER
+    set SN_NUMBER = #{snNumber,jdbcType=VARCHAR},
+      NAME = #{name,jdbcType=VARCHAR},
+      CARD = #{card,jdbcType=VARCHAR},
+      TEL = #{tel,jdbcType=VARCHAR},
+      OWNER_NAME = #{ownerName,jdbcType=VARCHAR},
+      OWNER_CARD = #{ownerCard,jdbcType=VARCHAR},
+      TRANSFER_DATE = #{transferDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

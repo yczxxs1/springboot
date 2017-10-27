@@ -1,0 +1,35 @@
+spring:
+  profiles:
+    active:
+    - dev
+#终端多彩输出    
+  output:
+    ansi:
+      enabled: detect
+#多文件上传      
+  http:
+    multipart:
+     max-file-size: 5MB
+     max-request-size: 25MB   
+  boot:
+    admin:
+      url:
+      - http://localhost:8090
+  application:
+    name: uav
+management:
+  security:
+    enabled: false   
+mybatis:
+  mapper-locations:
+  - classpath:mapper/*.xml
+  type-aliases-package: com.google.business.model  
+#  configuration:
+#    map-underscore-to-camel-case: true
+#    default-fetch-size: 100
+#    default-statement-timeout: 30
+
+#私有属性
+admin:
+  password: abc123456
+ 

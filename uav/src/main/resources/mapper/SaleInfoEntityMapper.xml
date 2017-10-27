@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.google.business.dao.SaleInfoDAO">
+	<resultMap id="BaseResultMap" type="SaleInfoEntity">
+		<result column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="NAME" jdbcType="VARCHAR" property="name" />
+		<result column="PHONE" jdbcType="VARCHAR" property="phone" />
+		<result column="OWNERID" jdbcType="VARCHAR" property="ownerid" />
+		<result column="REGSTATUS" jdbcType="VARCHAR" property="regstatus" />
+		<result column="SN" jdbcType="VARCHAR" property="sn" />
+		<result column="VENDORID" jdbcType="VARCHAR" property="vendorid" />
+		<result column="SALETIME" jdbcType="TIMESTAMP" property="saletime" />
+		<result column="UAVMODEL" jdbcType="VARCHAR" property="uavModel" />
+		<result column="OWNERTYPE" jdbcType="VARCHAR" property="ownerType" />
+		<result column="FACTORY_MODEL_ID" jdbcType="VARCHAR" property="factoryModelId" />
+		<result column="FACTORYNAME" jdbcType="VARCHAR" property="factoryname" />
+		<result column="UAVMODELNAME" jdbcType="VARCHAR" property="uavModelName" />
+		<result column="AREAID" jdbcType="VARCHAR" property="areaId" />
+		<result column="FACTORYMODELNAME" jdbcType="VARCHAR" property="factModelName" />
+	</resultMap>
+	<insert id="insert" parameterType="SaleInfoEntity">
+		insert into SALEINFO (ID,
+		NAME, PHONE,
+		OWNERID, REGSTATUS, SN,
+		VENDORID,
+		SALETIME,UAVMODEL,OWNERTYPE,FACTORY_MODEL_ID)
+		values
+		(#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+		#{phone,jdbcType=VARCHAR},
+		#{ownerid,jdbcType=VARCHAR},
+		#{regstatus,jdbcType=VARCHAR}, #{sn,jdbcType=VARCHAR},
+		#{vendorid,jdbcType=VARCHAR}, #{saletime,jdbcType=TIMESTAMP},
+		#{uavModel,jdbcType=VARCHAR},#{ownerType,jdbcType=VARCHAR},
+		#{factoryModelId,jdbcType=VARCHAR})
+	</insert>
+	<sql id="Base_Column_List">
+		ID,NAME, PHONE, OWNERID, REGSTATUS, SN, VENDORID, SALETIME,
+		UAVMODEL,
+		OWNERTYPE,FACTORY_MODEL_ID,
+		(select model_name from uav_model
+		where id = UAVMODEL) as UAVMODELNAME,
+		(select NAME from factory where
+		id = FACTORY_MODEL_ID) as FACTORYMODELNAME
+	</sql>
+	
+	<update id="updateSaleInfoBySn" parameterType="java.lang.String">
+		update saleinfo set regstatus = #{regstatus,jdbcType=VARCHAR}
+		where sn = #{sn,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from SALEINFO
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getSaleInfoByAreaId" parameterType="SaleInfoEntity"
+		resultMap="BaseResultMap">
+		select m.* from (
+		select b.*,(select NAME from factory where id =
+		FACTORY_MODEL_ID) as FACTORYMODELNAME
+		from (select *
+		from users
+		where
+		user_type = '2'
+		<!-- <choose>
+			<when test="areaId != null and areaId != ''">
+		        <![CDATA[ 
+		            and area_id = #{areaId,jdbcType=VARCHAR}
+		        ]]>
+			</when>
+			<otherwise>
+				and area_id not in(select area_id from area
+         		where area_father_id = (select city_id from city where trim(city_name) = '无锡市'))
+			</otherwise>
+		</choose> -->
+		<if test="areaId != null and areaId != ''">
+	         <![CDATA[ 
+		            and area_id = #{areaId,jdbcType=VARCHAR}
+		        ]]>
+		</if>
+		) a,
+		saleinfo b
+		where a.id = b.vendorid
+		<if test="name != null and name != ''">
+	        <![CDATA[ 
+	          and b.name = #{name,jdbcType=VARCHAR}
+	        ]]>
+		</if>
+		<if test="regstatus != null and regstatus != ''">
+	        <![CDATA[ 
+	          and b.regstatus = #{regstatus,jdbcType=VARCHAR}
+	        ]]>
+		</if>
+		)m left join factory n on m.factory_model_id = n.id
+		<where>
+			<if test="factModelName != null and factModelName != ''">
+	        <![CDATA[ 
+	          and n.name = #{factModelName,jdbcType=VARCHAR}
+	        ]]>
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectSaleInfo" parameterType="SaleInfoEntity"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from saleinfo
+		<where>
+			<if test="id != null and id != ''">
+                <![CDATA[ 
+                  AND id = #{id,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="name != null and name != ''">
+                <![CDATA[ 
+                  AND name = #{name,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="phone != null and phone != ''">
+                <![CDATA[ 
+                  AND phone = #{phone,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="ownerid != null and ownerid != ''">
+                <![CDATA[ 
+                  AND ownerid = #{ownerid,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="regstatus != null and regstatus != ''">
+                <![CDATA[ 
+                  AND regstatus = #{regstatus,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="sn != null and sn != ''">
+                <![CDATA[ 
+                  AND sn = #{sn,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="vendorid != null and vendorid != ''">
+                <![CDATA[ 
+                  AND vendorid = #{vendorid,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="saletime != null and saletime != ''">
+                <![CDATA[ 
+                  AND saletime = #{saletime,jdbcType=TIMESTAMP}
+                ]]>
+			</if>
+			<if test="factoryname != null and factoryname != ''">
+                <![CDATA[ 
+                  AND factoryname = #{factoryname,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="uavModel != null and factoryname != ''">
+                <![CDATA[ 
+                  AND uavmodel = #{uavModel,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="ownerType != null and ownerType != ''">
+                <![CDATA[ 
+                  AND ownertype = #{ownerType,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="factoryModelId != null and factoryModelId != ''">
+                <![CDATA[ 
+                  AND FACTORY_MODEL_ID = #{factoryModelId,jdbcType=VARCHAR}
+                ]]>
+			</if>
+		</where>
+		order by saletime desc
+	</select>
+
+	<select id="selectSaleInfoOne" parameterType="SaleInfoEntity"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from saleinfo
+		<where>
+			<if test="id != null and id != ''">
+                <![CDATA[ 
+                  AND id = #{id,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="name != null and name != ''">
+                <![CDATA[ 
+                  AND name = #{name,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="phone != null and phone != ''">
+                <![CDATA[ 
+                  AND phone = #{phone,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="ownerid != null and ownerid != ''">
+                <![CDATA[ 
+                  AND ownerid = #{ownerid,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="regstatus != null and regstatus != ''">
+                <![CDATA[ 
+                  AND regstatus = #{regstatus,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="sn != null and sn != ''">
+                <![CDATA[ 
+                  AND sn = #{sn,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="vendorid != null and vendorid != ''">
+                <![CDATA[ 
+                  AND vendorid = #{vendorid,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="saletime != null and saletime != ''">
+                <![CDATA[ 
+                  AND saletime = #{saletime,jdbcType=TIMESTAMP}
+                ]]>
+			</if>
+			<if test="factoryname != null and factoryname != ''">
+                <![CDATA[ 
+                  AND factoryname = #{factoryname,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="uavModel != null and factoryname != ''">
+                <![CDATA[ 
+                  AND uavmodel = #{uavModel,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="ownerType != null and ownerType != ''">
+                <![CDATA[ 
+                  AND ownertype = #{ownerType,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="factoryModelId != null and factoryModelId != ''">
+                <![CDATA[ 
+                  AND FACTORY_MODEL_ID = #{factoryModelId,jdbcType=VARCHAR}
+                ]]>
+			</if>
+		</where>
+	</select>
+
+	<select id="selectSaleInfo_count" parameterType="SaleInfoEntity"
+		resultType="java.lang.Integer">
+		select
+		count(0)
+		from saleinfo
+		<where>
+			<if test="id != null and id != ''">
+                <![CDATA[ 
+                  AND id = #{id,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="name != null and name != ''">
+                <![CDATA[ 
+                  AND name = #{name,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="phone != null and phone != ''">
+                <![CDATA[ 
+                  AND phone = #{phone,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="ownerid != null and ownerid != ''">
+                <![CDATA[ 
+                  AND ownerid = #{ownerid,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="regstatus != null and regstatus != ''">
+                <![CDATA[ 
+                  AND regstatus = #{regstatus,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="sn != null and sn != ''">
+                <![CDATA[ 
+                  AND sn = #{sn,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="vendorid != null and vendorid != ''">
+                <![CDATA[ 
+                  AND vendorid = #{vendorid,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="saletime != null and saletime != ''">
+                <![CDATA[ 
+                  AND saletime = #{saletime,jdbcType=TIMESTAMP}
+                ]]>
+			</if>
+			<if test="factoryname != null and factoryname != ''">
+                <![CDATA[ 
+                  AND factoryname = #{factoryname,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="uavModel != null and factoryname != ''">
+                <![CDATA[ 
+                  AND uavmodel = #{uavModel,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="ownerType != null and ownerType != ''">
+                <![CDATA[ 
+                  AND ownertype = #{ownerType,jdbcType=VARCHAR}
+                ]]>
+			</if>
+			<if test="factoryModelId != null and factoryModelId != ''">
+                <![CDATA[ 
+                  AND FACTORY_MODEL_ID = #{factoryModelId,jdbcType=VARCHAR}
+                ]]>
+			</if>
+		</where>
+		order by saletime desc
+	</select>
+	<insert id="insertSelective" parameterType="SaleInfoEntity"
+		keyProperty="id" useGeneratedKeys="true">
+		<selectKey keyProperty="id" order="BEFORE" resultType="java.lang.String">
+			select sys_guid() from dual
+		</selectKey>
+		insert into SALEINFO
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			ID,
+			<if test="name != null">
+				NAME,
+			</if>
+			<if test="phone != null">
+				PHONE,
+			</if>
+			<if test="ownerid != null">
+				OWNERID,
+			</if>
+			<if test="regstatus != null">
+				REGSTATUS,
+			</if>
+			<if test="sn != null">
+				SN,
+			</if>
+			<if test="vendorid != null">
+				VENDORID,
+			</if>
+			<if test="uavModel != null">
+				UAVMODEL,
+			</if>
+			<if test="ownerType != null">
+				OWNERTYPE,
+			</if>
+			<if test="factoryModelId != null">
+				FACTORY_MODEL_ID
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			#{id,jdbcType=VARCHAR},
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="phone != null">
+				#{phone,jdbcType=VARCHAR},
+			</if>
+			<if test="ownerid != null">
+				#{ownerid,jdbcType=VARCHAR},
+			</if>
+			<if test="regstatus != null">
+				#{regstatus,jdbcType=VARCHAR},
+			</if>
+			<if test="sn != null">
+				#{sn,jdbcType=VARCHAR},
+			</if>
+			<if test="vendorid != null">
+				#{vendorid,jdbcType=VARCHAR},
+			</if>
+			<if test="uavModel != null">
+				#{uavModel,jdbcType=VARCHAR},
+			</if>
+			<if test="ownerType != null">
+				#{ownerType,jdbcType=VARCHAR},
+			</if>
+			<if test="factoryModelId != null">
+				#{factoryModelId,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</insert>
+</mapper>

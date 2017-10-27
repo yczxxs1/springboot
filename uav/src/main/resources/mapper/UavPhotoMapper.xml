@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.google.business.dao.UavPhotoDAO" >
+  <resultMap id="BaseResultMap" type="UavPhotoEntity" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="UAV_ID" property="uavId" jdbcType="VARCHAR" />
+    <result column="PHOTO_URL" property="photoUrl" jdbcType="VARCHAR" />
+    <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
+    <result column="CREATE_DATE" property="createDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, UAV_ID, PHOTO_URL, USER_ID, CREATE_DATE
+  </sql>
+  
+  <select id="selectUavPhotoList" resultMap="BaseResultMap" parameterType="UavPhotoEntity" >
+    select 
+    <include refid="Base_Column_List" />
+    from UAV_PHOTO
+    	<where>
+          <if test="uavId != null and uavId != ''">
+              <![CDATA[ 
+               AND uav_id = #{uavId ,jdbcType=VARCHAR }
+              ]]>
+          </if>
+      </where>
+    order by CREATE_DATE desc
+  </select>
+  
+   <select id="selectUavPhotoList2" resultMap="BaseResultMap" parameterType="UavPhotoEntity" >
+    select 
+    <include refid="Base_Column_List" />
+    from UAV_PHOTO
+     where
+               uav_id = #{uavId} order by CREATE_DATE desc
+  </select>
+  
+  <select id="selectUavPhotoList_count" resultType="java.lang.Integer" parameterType="UavPhotoEntity" >
+    select 
+     count(0)
+    from UAV_PHOTO
+    	<where>
+          <if test="uavId != null and uavId != ''">
+              <![CDATA[ 
+               AND uav_id = #{uavId ,jdbcType=VARCHAR }
+              ]]>
+          </if>
+      </where>
+    order by CREATE_DATE desc
+  </select>
+  
+  <select id="selectUavPhotoOne" resultMap="BaseResultMap" parameterType="UavPhotoEntity" >
+    select 
+    <include refid="Base_Column_List" />
+    from UAV_PHOTO
+    	<where>
+          <if test="uavId != null and uavId != ''">
+              <![CDATA[ 
+               AND uav_id = #{uavId ,jdbcType=VARCHAR }
+              ]]>
+          </if>
+      </where>
+    order by CREATE_DATE desc
+  </select>
+  
+  <select id="selectUavPhotoFirst" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from (select p.*
+                  from uav_photo p
+                 where p.uav_id = #{uavId ,jdbcType=VARCHAR }
+                 order by p.create_date desc)
+     where rownum = 1
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from UAV_PHOTO
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByUavId" parameterType="java.lang.String" >
+    delete from UAV_PHOTO
+    where uav_id = #{uavId ,jdbcType=VARCHAR }
+  </delete>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from UAV_PHOTO
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="UavPhotoEntity" >
+    insert into UAV_PHOTO (ID, UAV_ID, PHOTO_URL, 
+      USER_ID, CREATE_DATE)
+    values (#{id,jdbcType=VARCHAR}, #{uavId,jdbcType=VARCHAR}, #{photoUrl,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="UavPhotoEntity" >
+    insert into UAV_PHOTO
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        ID,
+      <if test="uavId != null" >
+        UAV_ID,
+      </if>
+      <if test="photoUrl != null" >
+        PHOTO_URL,
+      </if>
+      <if test="userId != null" >
+        USER_ID,
+      </if>
+      <if test="createDate != null" >
+        CREATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+		sys_guid(),
+      <if test="uavId != null" >
+        #{uavId,jdbcType=VARCHAR},
+      </if>
+      <if test="photoUrl != null" >
+        #{photoUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="UavPhotoEntity" >
+    update UAV_PHOTO
+    <set >
+      <if test="uavId != null" >
+        UAV_ID = #{uavId,jdbcType=VARCHAR},
+      </if>
+      <if test="photoUrl != null" >
+        PHOTO_URL = #{photoUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        USER_ID = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="UavPhotoEntity" >
+    update UAV_PHOTO
+    set UAV_ID = #{uavId,jdbcType=VARCHAR},
+      PHOTO_URL = #{photoUrl,jdbcType=VARCHAR},
+      USER_ID = #{userId,jdbcType=VARCHAR},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

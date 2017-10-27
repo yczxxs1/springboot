@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.google.business.dao.PoliceDAO">
+  <resultMap id="BaseResultMap" type="Police">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="POLICE_NUMBER" jdbcType="VARCHAR" property="policeNumber" />
+    <result column="COMPANY_NAME" jdbcType="VARCHAR" property="companyName" />
+    <result column="COMPANY_EMAIL" jdbcType="VARCHAR" property="companyEmail" />
+    <result column="POLICE_NAME" jdbcType="VARCHAR" property="policeName" />
+    <result column="PHONE_NUMBER" jdbcType="VARCHAR" property="phoneNumber" />
+    <result column="USER_ID" jdbcType="VARCHAR" property="userId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, POLICE_NUMBER, COMPANY_NAME, COMPANY_EMAIL, POLICE_NAME, PHONE_NUMBER, USER_ID
+  </sql>
+  <select id="selectByPrimaryKey"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from POLICE
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectOne"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from POLICE
+    <where>
+      <if test="id != null">
+       <![CDATA[ 
+        AND ID = #{id,jdbcType=VARCHAR}
+         ]]>
+      </if>
+      
+      <if test="userId != null">
+        <![CDATA[ 
+         AND USER_ID = #{userId,jdbcType=VARCHAR}
+          ]]>
+      </if>
+      
+    </where>
+    
+  </select>
+  
+  
+  <select id="selectByUserId"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from POLICE
+    where  USER_ID = #{userId,jdbcType=VARCHAR} 
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from POLICE
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="Police">
+    insert into POLICE (ID, POLICE_NUMBER, COMPANY_NAME, 
+      COMPANY_EMAIL, POLICE_NAME, PHONE_NUMBER, 
+      USER_ID)
+    values (#{id,jdbcType=VARCHAR}, #{policeNumber,jdbcType=VARCHAR}, #{companyName,jdbcType=VARCHAR}, 
+      #{companyEmail,jdbcType=VARCHAR}, #{policeName,jdbcType=VARCHAR}, #{phoneNumber,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="Police">
+    insert into POLICE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+    	ID,
+      <if test="policeNumber != null">
+        POLICE_NUMBER,
+      </if>
+      <if test="companyName != null">
+        COMPANY_NAME,
+      </if>
+      <if test="companyEmail != null">
+        COMPANY_EMAIL,
+      </if>
+      <if test="policeName != null">
+        POLICE_NAME,
+      </if>
+      <if test="phoneNumber != null">
+        PHONE_NUMBER,
+      </if>
+      <if test="userId != null">
+        USER_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      sys_guid(),
+      <if test="policeNumber != null">
+        #{policeNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null">
+        #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="companyEmail != null">
+        #{companyEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="policeName != null">
+        #{policeName,jdbcType=VARCHAR},
+      </if>
+      <if test="phoneNumber != null">
+        #{phoneNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="Police">
+    update POLICE
+    <set>
+      <if test="policeNumber != null">
+        POLICE_NUMBER = #{policeNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null">
+        COMPANY_NAME = #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="companyEmail != null">
+        COMPANY_EMAIL = #{companyEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="policeName != null">
+        POLICE_NAME = #{policeName,jdbcType=VARCHAR},
+      </if>
+      <if test="phoneNumber != null">
+        PHONE_NUMBER = #{phoneNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        USER_ID = #{userId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="Police">
+    update POLICE
+    set POLICE_NUMBER = #{policeNumber,jdbcType=VARCHAR},
+      COMPANY_NAME = #{companyName,jdbcType=VARCHAR},
+      COMPANY_EMAIL = #{companyEmail,jdbcType=VARCHAR},
+      POLICE_NAME = #{policeName,jdbcType=VARCHAR},
+      PHONE_NUMBER = #{phoneNumber,jdbcType=VARCHAR},
+      USER_ID = #{userId,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

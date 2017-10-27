@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.google.business.dao.UavHistoryDAO">
+  <resultMap id="BaseResultMap" type="UavHistoryEntity">
+    <id column="ID" jdbcType="DECIMAL" property="id" />
+    <result column="SN_NUMBER" jdbcType="VARCHAR" property="snNumber" />
+    <result column="STATUS" jdbcType="VARCHAR" property="status" />
+    <result column="STATUS_CHANGE_DATE" jdbcType="TIMESTAMP" property="statusChangeDate" />
+    <result column="SALE_ID" jdbcType="VARCHAR" property="saleId" />
+    <result column="TRANSFER_ID" jdbcType="VARCHAR" property="transferId" />
+    <result column="HISTORY_BELONG_ID" jdbcType="VARCHAR" property="historyBelongId" />
+    <association column="HISTORY_BELONG_ID" property="loginOrWriteOffInfo"
+			select="com.google.business.dao.UserDAO.selectByPrimaryKey" />
+    <association column="TRANSFER_ID" property="uavTransferEntity"
+			select="com.google.business.dao.UavTransferDAO.selectByPrimaryKey" />
+	<association column="SALE_ID" property="saleInfoEntity"
+			select="com.google.business.dao.SaleInfoDAO.selectByPrimaryKey" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, SN_NUMBER, STATUS, STATUS_CHANGE_DATE, SALE_ID, TRANSFER_ID,HISTORY_BELONG_ID
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from UAV_HISTORY
+    where ID = #{id,jdbcType=DECIMAL}
+  </select>
+  <select id="selectBySnNumber" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from UAV_HISTORY
+	    <where>
+	    	<if test="snNumber != null and snNumber != ''">
+	            <![CDATA[ 
+	             AND SN_NUMBER = #{snNumber ,jdbcType=VARCHAR }
+	            ]]>
+	        </if>
+	        <if test="status != null and status != ''">
+	            <![CDATA[ 
+	             AND STATUS = #{status ,jdbcType=VARCHAR }
+	            ]]>
+	        </if>
+	        <if test="transferId != null and transferId != ''">
+	            <![CDATA[ 
+	             AND TRANSFER_ID = #{transferId ,jdbcType=VARCHAR }
+	            ]]>
+	        </if>
+	        <if test="saleId	 != null and saleId != ''">
+	            <![CDATA[ 
+	             AND SALE_ID = #{saleId ,jdbcType=VARCHAR }
+	            ]]>
+	        </if>
+	    </where>
+	    order by STATUS_CHANGE_DATE desc
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from UAV_HISTORY
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="UavHistoryEntity">
+    insert into UAV_HISTORY (ID, SN_NUMBER, STATUS, 
+      STATUS_CHANGE_DATE)
+    values (#{id,jdbcType=DECIMAL}, #{snNumber,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+      #{statusChangeDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="UavHistoryEntity">
+    insert into UAV_HISTORY
+    <trim prefix="(" suffix=")" suffixOverrides=",">    
+        ID,
+      <if test="snNumber != null">
+        SN_NUMBER,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+        STATUS_CHANGE_DATE,
+      <if test="saleId != null">
+        SALE_ID,
+      </if>
+      <if test="transferId != null">
+        TRANSFER_ID
+      </if>
+      <if test="historyBelongId != null">
+        HISTORY_BELONG_ID
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+     	UAV_HISTORY_SEQ.NEXTVAL,
+      <if test="snNumber != null">
+        #{snNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      	sysdate,
+      <if test="saleId != null">
+        #{saleId,jdbcType=VARCHAR},
+      </if>
+      <if test="transferId != null">
+        #{transferId,jdbcType=VARCHAR}
+      </if>
+      <if test="historyBelongId != null">
+        #{historyBelongId,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="UavHistoryEntity">
+    update UAV_HISTORY
+    <set>
+      <if test="snNumber != null">
+        SN_NUMBER = #{snNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+       <if test="statusChangeDate != null">
+        #{statusChangeDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="UavHistoryEntity">
+    update UAV_HISTORY
+    set SN_NUMBER = #{snNumber,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      STATUS_CHANGE_DATE = #{statusChangeDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+</mapper>

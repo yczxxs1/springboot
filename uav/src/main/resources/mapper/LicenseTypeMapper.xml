@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.google.business.dao.LicenseTypeDAO" >
+  <resultMap id="BaseResultMap" type="LicenseTypeEntity" >
+    <id column="LICENSE_TYPE_ID" property="licenseTypeId" jdbcType="VARCHAR" />
+    <result column="LICENSE_TYPE_NAME" property="licenseTypeName" jdbcType="VARCHAR" />
+    <result column="ISSUING_AUTHORITY" property="issuingAuthority" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    LICENSE_TYPE_ID, LICENSE_TYPE_NAME, ISSUING_AUTHORITY
+  </sql>
+  
+  <select id="selectLicenseTypeList" resultMap="BaseResultMap" parameterType="LicenseTypeEntity" >
+    select 
+    <include refid="Base_Column_List" />
+    from LICENSE_TYPE
+  </select>
+  
+  <select id="selectLicenseTypeList_count" resultType="java.lang.Integer" parameterType="LicenseTypeEntity" >
+    select 
+     count(0)
+    from LICENSE_TYPE
+  </select>
+  
+  <select id="selectLicenseTypeOne" resultMap="BaseResultMap" parameterType="LicenseTypeEntity" >
+    select 
+    <include refid="Base_Column_List" />
+    from LICENSE_TYPE
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from LICENSE_TYPE
+    where LICENSE_TYPE_ID = #{licenseTypeId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from LICENSE_TYPE
+    where LICENSE_TYPE_ID = #{licenseTypeId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="LicenseTypeEntity" >
+    insert into LICENSE_TYPE (LICENSE_TYPE_ID, LICENSE_TYPE_NAME, ISSUING_AUTHORITY
+      )
+    values (#{licenseTypeId,jdbcType=VARCHAR}, #{licenseTypeName,jdbcType=VARCHAR}, #{issuingAuthority,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="LicenseTypeEntity" >
+    insert into LICENSE_TYPE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="licenseTypeId != null" >
+        LICENSE_TYPE_ID,
+      </if>
+      <if test="licenseTypeName != null" >
+        LICENSE_TYPE_NAME,
+      </if>
+      <if test="issuingAuthority != null" >
+        ISSUING_AUTHORITY,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="licenseTypeId != null" >
+        #{licenseTypeId,jdbcType=VARCHAR},
+      </if>
+      <if test="licenseTypeName != null" >
+        #{licenseTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="issuingAuthority != null" >
+        #{issuingAuthority,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="LicenseTypeEntity" >
+    update LICENSE_TYPE
+    <set >
+      <if test="licenseTypeName != null" >
+        LICENSE_TYPE_NAME = #{licenseTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="issuingAuthority != null" >
+        ISSUING_AUTHORITY = #{issuingAuthority,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where LICENSE_TYPE_ID = #{licenseTypeId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="LicenseTypeEntity" >
+    update LICENSE_TYPE
+    set LICENSE_TYPE_NAME = #{licenseTypeName,jdbcType=VARCHAR},
+      ISSUING_AUTHORITY = #{issuingAuthority,jdbcType=VARCHAR}
+    where LICENSE_TYPE_ID = #{licenseTypeId,jdbcType=VARCHAR}
+  </update>
+</mapper>

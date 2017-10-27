@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.google.business.dao.SmsDAO">
+  <resultMap id="SmsValidateResultMap" type="SmsValidateEntity">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="PHONENUMBER" jdbcType="VARCHAR" property="phoneNumber" />
+    <result column="CODE" jdbcType="VARCHAR" property="code" />
+    <result column="EXPIREDATE" jdbcType="TIMESTAMP" property="expireDate" />
+  </resultMap>
+
+ <select id="selectOne" parameterType="SmsValidateEntity" resultMap="SmsValidateResultMap">
+ select * from sms_validate
+  <where>
+                <if test="id != null and id != ''">
+                    <![CDATA[ 
+                     AND ID = #{userId ,jdbcType=VARCHAR }                    
+                    ]]>
+                </if>
+                <if test="phoneNumber != null and phoneNumber != ''">
+                    <![CDATA[ 
+                     AND PHONENUMBER = #{phoneNumber ,jdbcType=VARCHAR }
+                    ]]>
+                </if>
+                <if test="code != null">
+                    <![CDATA[ 
+                     AND CODE = #{code ,jdbcType=VARCHAR }
+                    ]]>
+                </if>
+                <if test="expireDate != null">
+                    <![CDATA[ 
+                     AND EXPIREDATE = #{expireDate ,jdbcType=TIMESTAMP }
+                    ]]>
+                </if>
+       </where>
+ </select>
+
+  <delete id="deleteSmsValidate" parameterType="SmsValidateEntity">
+    delete from SMS_VALIDATE
+    <where>
+            <if test="id != null and id != ''">
+                <![CDATA[ 
+                  AND ID = #{id,jdbcType=VARCHAR}
+                ]]>
+            </if>
+      </where>
+  </delete>
+  
+  
+  <insert id="save" parameterType="SmsValidateEntity">
+    insert into SMS_VALIDATE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+    <![CDATA[ 
+                  ID,
+                ]]>
+      <if test="phoneNumber != null and phoneNumber !=''">
+        PHONENUMBER,
+      </if>
+      <if test="code != null and code !=''">
+        CODE,
+      </if>
+      <if test="expireDate != null ">
+        EXPIREDATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+        <![CDATA[ 
+           sys_guid(),
+          ]]>
+      <if test="phoneNumber != null and phoneNumber !=''">
+        #{phoneNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null and code !=''">
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="expireDate != null ">
+        #{expireDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="update" parameterType="SmsValidateEntity">
+    update SMS_VALIDATE
+    <set>
+     
+      <if test="code != null and code !=''">
+        CODE = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="expireDate != null ">
+        EXPIREDATE = #{expireDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <where>
+            <if test="id != null and id != ''">
+                    <![CDATA[ 
+                     AND id = #{id ,jdbcType=VARCHAR }                    
+                    ]]>
+                </if>
+        <if test="phoneNumber != null and phoneNumber !=''">
+               AND PHONENUMBER = #{phoneNumber,jdbcType=VARCHAR}
+      </if>
+         </where>
+  </update>
+</mapper>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.google.business.dao.ProvinceDAO">
+  <resultMap id="BaseResultMap" type="Province">
+    <id column="PROVINCE_ID" jdbcType="VARCHAR" property="provinceId" />
+    <result column="PRIVINCE_NAME" jdbcType="VARCHAR" property="privinceName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    PROVINCE_ID, PRIVINCE_NAME
+  </sql>
+  <select id="selectAll" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from PROVINCE
+   <!-- where PROVINCE_ID = #{provinceId,jdbcType=VARCHAR}-->
+  </select>
+  
+  <select id="selectOne"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from PROVINCE
+   <where>
+     <if test="provinceId!=null">
+       AND PROVINCE_ID = #{provinceId,jdbcType=VARCHAR}
+     </if>
+     
+     <if test="privinceName!=null">
+        AND PRIVINCE_NAME = #{privinceName,jdbcType=VARCHAR}
+     </if>
+   </where>
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from PROVINCE
+    where PROVINCE_ID = #{provinceId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="Province">
+    insert into PROVINCE (PROVINCE_ID, PRIVINCE_NAME)
+    values (#{provinceId,jdbcType=VARCHAR}, #{privinceName,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="Province">
+    insert into PROVINCE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="provinceId != null">
+        PROVINCE_ID,
+      </if>
+      <if test="privinceName != null">
+        PRIVINCE_NAME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="provinceId != null">
+        #{provinceId,jdbcType=VARCHAR},
+      </if>
+      <if test="privinceName != null">
+        #{privinceName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="Province">
+    update PROVINCE
+    <set>
+      <if test="privinceName != null">
+        PRIVINCE_NAME = #{privinceName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where PROVINCE_ID = #{provinceId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="Province">
+    update PROVINCE
+    set PRIVINCE_NAME = #{privinceName,jdbcType=VARCHAR}
+    where PROVINCE_ID = #{provinceId,jdbcType=VARCHAR}
+  </update>
+</mapper>

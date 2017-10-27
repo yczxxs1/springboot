@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.google.business.dao.LicenseDAO" >
+  <resultMap id="BaseResultMap" type="LicenseEntity" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
+    <result column="LICENSE_TYPE_ID" property="licenseTypeId" jdbcType="VARCHAR" />
+    <result column="LICENSE_TYPE_NAME" property="licenseTypeName" jdbcType="VARCHAR" />
+    <result column="ISSUING_AUTHORITY" property="issuingAuthority" jdbcType="VARCHAR" />
+    <result column="LICENSE_NUMBER" property="licenseNumber" jdbcType="VARCHAR" />
+    <result column="ISSUING_DATE" property="issuingDate" jdbcType="TIMESTAMP" />
+    <result column="VALID_DATE" property="validDate" jdbcType="TIMESTAMP" />
+    <result column="LICENSE_LEVEL" property="licenseLevel" jdbcType="VARCHAR" />
+    <result column="LICENSE_STATUS" property="licenseStatus" jdbcType="VARCHAR" />
+    <result column="REVIEW" property="review" jdbcType="VARCHAR" />
+    <result column="NIKE_NAME" property="nikeName" jdbcType="VARCHAR" />
+    <result column="AREA_NAME" property="areaName" jdbcType="VARCHAR"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    a.ID, USER_ID, LICENSE_TYPE_ID, LICENSE_TYPE_NAME, ISSUING_AUTHORITY, LICENSE_NUMBER, 
+    ISSUING_DATE, VALID_DATE, LICENSE_LEVEL,LICENSE_STATUS,REVIEW, NIKE_NAME,
+    (SELECT AREA_NAME FROM AREA WHERE AREA_ID=b.AREA_ID) AS AREA_NAME 
+  </sql>
+  
+  <select id="selectLicenseList" resultMap="BaseResultMap" parameterType="LicenseEntity" >
+    select 
+    <include refid="Base_Column_List" />
+    from LICENSE a
+    left join 
+    users b 
+    on a.user_id=b.id
+    where a.license_Status ='1'
+          <if test="userId != null and userId != ''">
+              <![CDATA[ 
+               AND user_id = #{userId ,jdbcType=VARCHAR }
+              ]]>
+          </if>
+          <if test="licenseNumber != null and licenseNumber != ''">
+          	<![CDATA[
+          	  AND license_number = #{licenseNumber,jdbcType=VARCHAR}
+          	]]>
+          </if>
+          <if test="nikeName != null and nikeName != ''">
+              <![CDATA[ 
+               AND nike_name = #{nikeName ,jdbcType=VARCHAR }
+              ]]>
+          </if>
+          <if test="licenseTypeId != null and licenseTypeId != ''">
+              <![CDATA[ 
+               AND LICENSE_TYPE_ID = #{licenseTypeId ,jdbcType=VARCHAR }
+              ]]>
+          </if>
+          <if test="id != null and id != ''">
+              <![CDATA[ 
+               AND a.id = #{id ,jdbcType=VARCHAR }
+              ]]>
+          </if>
+          <if test="review != null and review != ''">
+              <![CDATA[ 
+               AND review = #{review ,jdbcType=VARCHAR }
+              ]]>
+          </if>
+    order by ISSUING_DATE desc
+  </select>
+  
+  <select id="selectLicenseList_count" resultType="java.lang.Integer" parameterType="LicenseEntity" >
+   select 
+  count(0)
+    from LICENSE a
+    left join 
+    users b 
+    on a.user_id=b.id
+    where a.license_Status ='1'
+     <if test="userId != null and userId != ''">
+         <![CDATA[ 
+          AND user_id = #{userId ,jdbcType=VARCHAR }
+         ]]>
+     </if>
+     <if test="licenseNumber != null and licenseNumber != ''">
+     	<![CDATA[
+     	  AND license_number = #{licenseNumber,jdbcType=VARCHAR}
+     	]]>
+     </if>
+     <if test="nikeName != null and nikeName != ''">
+         <![CDATA[ 
+          AND nike_name = #{nikeName ,jdbcType=VARCHAR }
+         ]]>
+     </if>
+     <if test="licenseTypeId != null and licenseTypeId != ''">
+         <![CDATA[ 
+          AND LICENSE_TYPE_ID = #{licenseTypeId ,jdbcType=VARCHAR }
+         ]]>
+     </if>
+     <if test="id != null and id != ''">
+         <![CDATA[ 
+          AND a.id = #{id ,jdbcType=VARCHAR }
+         ]]>
+     </if>
+     <if test="review != null and review != ''">
+         <![CDATA[ 
+          AND review = #{review ,jdbcType=VARCHAR }
+         ]]>
+     </if>
+  </select>
+  
+  <select id="selectLienseListByAreaId" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from LICENSE a left join users b on a.user_id = b.id
+    <where>
+		<if test="areaId != null and areaId != ''">
+	      AND b.area_id in
+	    <foreach item="item" collection="areaId" separator="," open="(" close=")" index="">
+	      #{item, jdbcType=VARCHAR}
+	    </foreach>
+		</if>
+		
+		<if test="le.nikeName != null and le.nikeName != ''">
+              <![CDATA[ 
+               AND b.nike_name = #{le.nikeName ,jdbcType=VARCHAR }
+              ]]>
+        </if>
+        
+        <if test="le.licenseNumber != null and le.licenseNumber != ''">
+    	<![CDATA[
+    	  AND a.license_number = #{le.licenseNumber,jdbcType=VARCHAR}
+    	]]>
+    </if>
+    <if test="le.review != null and le.review != ''">
+        <![CDATA[ 
+         AND a.review = #{le.review ,jdbcType=VARCHAR }
+        ]]>
+    </if>
+    <if test="le.licenseTypeId != null and le.licenseTypeId != ''">
+         <![CDATA[ 
+          AND a.LICENSE_TYPE_ID = #{le.licenseTypeId ,jdbcType=VARCHAR }
+         ]]>
+   </if>
+   <if test="le.id != null and le.id != ''">
+              <![CDATA[ 
+               AND a.id = #{le.id ,jdbcType=VARCHAR }
+              ]]>
+          </if>
+    </where>
+    order by a.ISSUING_DATE desc
+  </select>
+  
+  <select id="selectLienseListByAreaId_count" resultType="java.lang.Integer" parameterType="LicenseEntity" >
+   select count(0)
+    from LICENSE a,(
+    select * from users b 
+    <where>
+	    <choose>
+			<when test="areaId != null and areaId != ''">
+		        <![CDATA[ 
+		            and b.area_id = #{areaId,jdbcType=VARCHAR}
+		        ]]>
+			</when>
+			<otherwise>
+				and area_id not in(select area_id from area
+	        		where area_father_id = (select city_id from city where trim(city_name) = '无锡市市'))
+			</otherwise>
+		</choose>
+		<if test="nikeName != null and nikeName != ''">
+              <![CDATA[ 
+               AND b.nike_name = #{nikeName ,jdbcType=VARCHAR }
+              ]]>
+          </if>
+	</where>
+    )c
+	where c.id = a.user_id
+    <if test="licenseNumber != null and licenseNumber != ''">
+    	<![CDATA[
+    	  AND a.license_number = #{licenseNumber,jdbcType=VARCHAR}
+    	]]>
+    </if>
+    <if test="review != null and review != ''">
+        <![CDATA[ 
+         AND a.review = #{review ,jdbcType=VARCHAR }
+        ]]>
+    </if>
+    order by a.ISSUING_DATE desc
+  </select>
+  
+  <select id="selectLicenseOne" resultMap="BaseResultMap" parameterType="LicenseEntity" >
+    select 
+    <include refid="Base_Column_List" />
+    from LICENSE a
+    left join 
+    users b 
+    on a.user_id=b.id
+    <where>
+          <if test="userId != null and userId != ''">
+              <![CDATA[ 
+               AND user_id = #{userId ,jdbcType=VARCHAR }
+              ]]>
+          </if>
+          <if test="licenseNumber != null and licenseNumber != ''">
+          	<![CDATA[
+          	  AND license_number = #{licenseNumber,jdbcType=VARCHAR}
+          	]]>
+          </if>
+          <if test="nikeName != null and nikeName != ''">
+              <![CDATA[ 
+               AND nike_name = #{nikeName ,jdbcType=VARCHAR }
+              ]]>
+          </if>
+          <if test="licenseTypeId != null and licenseTypeId != ''">
+              <![CDATA[ 
+               AND LICENSE_TYPE_ID = #{licenseTypeId ,jdbcType=VARCHAR }
+              ]]>
+          </if>
+          <if test="id != null and id != ''">
+              <![CDATA[ 
+               AND a.id = #{id ,jdbcType=VARCHAR }
+              ]]>
+          </if>
+          <if test="review != null and review != ''">
+              <![CDATA[ 
+               AND review = #{review ,jdbcType=VARCHAR }
+              ]]>
+          </if>
+           <if test="licenseStatus != null and licenseStatus != ''">
+              <![CDATA[ 
+               AND license_Status = #{licenseStatus ,jdbcType=VARCHAR }
+              ]]>
+          </if>
+     </where>
+    order by ISSUING_DATE desc
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    *
+    from LICENSE
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+  	delete from LICENSE
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByUserId" parameterType="java.lang.String" >
+  	delete from LICENSE
+    where USER_ID = #{userId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="LicenseEntity" >
+    insert into LICENSE (ID, USER_ID, LICENSE_TYPE_ID, 
+      LICENSE_TYPE_NAME, ISSUING_AUTHORITY, LICENSE_NUMBER, 
+      ISSUING_DATE, VALID_DATE, LICENSE_LEVEL
+      )
+    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{licenseTypeId,jdbcType=VARCHAR}, 
+      #{licenseTypeName,jdbcType=VARCHAR}, #{issuingAuthority,jdbcType=VARCHAR}, #{licenseNumber,jdbcType=VARCHAR}, 
+      #{issuingDate,jdbcType=TIMESTAMP}, #{validDate,jdbcType=TIMESTAMP}, #{licenseLevel,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="LicenseEntity" keyProperty="id" useGeneratedKeys="true">
+		<selectKey keyProperty="id" order="BEFORE" resultType="java.lang.String">
+			select sys_guid() from dual
+		</selectKey> 
+    insert into LICENSE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+				ID,
+      <if test="userId != null" >
+        USER_ID,
+      </if>
+      <if test="licenseTypeId != null" >
+        LICENSE_TYPE_ID,
+      </if>
+      <if test="licenseTypeName != null" >
+        LICENSE_TYPE_NAME,
+      </if>
+      <if test="issuingAuthority != null" >
+        ISSUING_AUTHORITY,
+      </if>
+      <if test="licenseNumber != null" >
+        LICENSE_NUMBER,
+      </if>
+      <if test="issuingDate != null" >
+        ISSUING_DATE,
+      </if>
+      <if test="validDate != null" >
+        VALID_DATE,
+      </if>
+      <if test="licenseLevel != null" >
+        LICENSE_LEVEL,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+		#{id,jdbcType=VARCHAR},
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="licenseTypeId != null" >
+        #{licenseTypeId,jdbcType=VARCHAR},
+      </if>
+      <if test="licenseTypeName != null" >
+        #{licenseTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="issuingAuthority != null" >
+        #{issuingAuthority,jdbcType=VARCHAR},
+      </if>
+      <if test="licenseNumber != null" >
+        #{licenseNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="issuingDate != null" >
+        #{issuingDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="validDate != null" >
+        #{validDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="licenseLevel != null" >
+        #{licenseLevel,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="LicenseEntity" >
+    update LICENSE
+    <set >
+      <if test="userId != null" >
+        USER_ID = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="licenseTypeId != null" >
+        LICENSE_TYPE_ID = #{licenseTypeId,jdbcType=VARCHAR},
+      </if>
+      <if test="licenseTypeName != null" >
+        LICENSE_TYPE_NAME = #{licenseTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="issuingAuthority != null" >
+        ISSUING_AUTHORITY = #{issuingAuthority,jdbcType=VARCHAR},
+      </if>
+      <if test="licenseNumber != null" >
+        LICENSE_NUMBER = #{licenseNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="issuingDate != null" >
+        ISSUING_DATE = #{issuingDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="validDate != null" >
+        VALID_DATE = #{validDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="licenseLevel != null" >
+        LICENSE_LEVEL = #{licenseLevel,jdbcType=VARCHAR},
+      </if>
+       <if test="licenseStatus != null" >
+        LICENSE_STATUS = #{licenseStatus,jdbcType=VARCHAR},
+      </if>
+       <if test="review != null" >
+        REVIEW = #{review,jdbcType=VARCHAR},
+      </if>
+      <if test="reviewReason != null" >
+        REVIEW_REASON = #{reviewReason,jdbcType=VARCHAR},
+      </if>
+       <if test="reviewRemark != null" >
+        REVIEW_REMARK = #{reviewRemark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="LicenseEntity" >
+    update LICENSE
+    set USER_ID = #{userId,jdbcType=VARCHAR},
+      LICENSE_TYPE_ID = #{licenseTypeId,jdbcType=VARCHAR},
+      LICENSE_TYPE_NAME = #{licenseTypeName,jdbcType=VARCHAR},
+      ISSUING_AUTHORITY = #{issuingAuthority,jdbcType=VARCHAR},
+      LICENSE_NUMBER = #{licenseNumber,jdbcType=VARCHAR},
+      ISSUING_DATE = #{issuingDate,jdbcType=TIMESTAMP},
+      VALID_DATE = #{validDate,jdbcType=TIMESTAMP},
+      LICENSE_LEVEL = #{licenseLevel,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

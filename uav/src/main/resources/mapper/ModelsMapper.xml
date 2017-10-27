@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.google.business.dao.ModelsDAO">
+  <resultMap id="BaseResultMap" type="com.google.business.model.Models">
+    <id column="MODEL_ID" jdbcType="VARCHAR" property="modelId" />
+    <result column="MODEL_NAME" jdbcType="VARCHAR" property="modelName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    MODEL_ID, MODEL_NAME
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from MODELS
+    where MODEL_ID = #{modelId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from MODELS
+    where MODEL_ID = #{modelId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.google.business.model.Models">
+    insert into MODELS (MODEL_ID, MODEL_NAME)
+    values (#{modelId,jdbcType=VARCHAR}, #{modelName,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.google.business.model.Models">
+    insert into MODELS
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="modelId != null">
+        MODEL_ID,
+      </if>
+      <if test="modelName != null">
+        MODEL_NAME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="modelId != null">
+        #{modelId,jdbcType=VARCHAR},
+      </if>
+      <if test="modelName != null">
+        #{modelName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.google.business.model.Models">
+    update MODELS
+    <set>
+      <if test="modelName != null">
+        MODEL_NAME = #{modelName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where MODEL_ID = #{modelId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.google.business.model.Models">
+    update MODELS
+    set MODEL_NAME = #{modelName,jdbcType=VARCHAR}
+    where MODEL_ID = #{modelId,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,12 @@
+server:
+  port: 8080
+  
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@192.168.200.93:1521:orclllg2
+    username: uav
+    password: uav
+    driver-class-name: oracle.jdbc.driver.OracleDriver 
+    
+logging:
+  file: uav.log

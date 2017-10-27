@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.google.business.dao.FactoryDAO" >
+  <resultMap id="BaseResultMap" type="FactoryEntity" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    
+    <association column="ID" property="uavModelList" select="com.google.business.dao.UavModelDAO.queryUavModel"/>  
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    ID, NAME
+  </sql>
+  
+  <select id="selectFactoryList" resultMap="BaseResultMap" parameterType="FactoryEntity" >
+    select 
+    <include refid="Base_Column_List" />
+    from FACTORY
+    <where>
+    <if test="id != null and id != ''">
+               AND id = #{id ,jdbcType=VARCHAR }   
+    </if>
+      <if test="name != null and name != ''" >  
+               AND name = #{name ,jdbcType=VARCHAR }  
+      </if>
+    </where>
+  </select>
+  
+  <select id="selectFactoryList_count" resultType="java.lang.Integer" parameterType="FactoryEntity" >
+    select 
+     count(0)
+    from FACTORY
+    <where>
+    <if test="id != null and id != ''">
+               AND id = #{id ,jdbcType=VARCHAR }   
+    </if>
+      <if test="name != null and name != ''" >  
+               AND name = #{name ,jdbcType=VARCHAR }  
+      </if>
+    </where>
+  </select>
+  
+  <select id="selectFactoryOne" resultMap="BaseResultMap" parameterType="FactoryEntity" >
+    select 
+    <include refid="Base_Column_List" />
+    from FACTORY
+   where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from FACTORY
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from FACTORY
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="FactoryEntity" >
+    insert into FACTORY (ID, NAME)
+    values ( 
+           sys_guid(),
+           #{name,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="FactoryEntity" >
+    insert into FACTORY
+    <trim prefix="(" suffix=")" suffixOverrides="," >    
+        ID,
+      <if test="name != null" >
+        NAME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >    
+           sys_guid(),
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="FactoryEntity" >
+    update FACTORY
+    <set >
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="FactoryEntity" >
+    update FACTORY
+    set NAME = #{name,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.google.business.dao.CompanyPhotoDAO">
+  <resultMap id="BaseResultMap" type="CompanyPhoto">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="COMPANY_ID" jdbcType="VARCHAR" property="companyId" />
+    <result column="CERT_PHOTO" jdbcType="VARCHAR" property="certPhoto" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    ID, COMPANY_ID, CERT_PHOTO, CREATE_DATE
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from COMPANY_PHOTO
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectListByCompanyId"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from COMPANY_PHOTO
+    where COMPANY_ID = #{companyId,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from COMPANY_PHOTO
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  
+  <delete id="deleteByCompanyId" parameterType="java.lang.String">
+    delete from COMPANY_PHOTO
+    where COMPANY_ID = #{companyId,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="CompanyPhoto">
+    insert into COMPANY_PHOTO (ID, COMPANY_ID, CERT_PHOTO, 
+      CREATE_DATE)
+    values (#{id,jdbcType=VARCHAR}, #{companyId,jdbcType=VARCHAR}, #{certPhoto,jdbcType=VARCHAR}, 
+      #{createDate,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <insert id="insertSelective" parameterType="CompanyPhoto">
+    insert into COMPANY_PHOTO
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      
+        ID,
+     
+      <if test="companyId != null">
+        COMPANY_ID,
+      </if>
+      <if test="certPhoto != null">
+        CERT_PHOTO,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      
+        sys_guid(),
+      
+      <if test="companyId != null">
+        #{companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="certPhoto != null">
+        #{certPhoto,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="CompanyPhoto">
+    update COMPANY_PHOTO
+    <set>
+      <if test="companyId != null">
+        COMPANY_ID = #{companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="certPhoto != null">
+        CERT_PHOTO = #{certPhoto,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="CompanyPhoto">
+    update COMPANY_PHOTO
+    set COMPANY_ID = #{companyId,jdbcType=VARCHAR},
+      CERT_PHOTO = #{certPhoto,jdbcType=VARCHAR},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+</mapper>

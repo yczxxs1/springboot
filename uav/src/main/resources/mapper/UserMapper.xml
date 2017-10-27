@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.google.business.dao.UserDAO">
+	<resultMap id="BaseResultMap" type="User">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="NAME" jdbcType="VARCHAR" property="name" />
+		<result column="PASSWORD" jdbcType="VARCHAR" property="password" />
+		<result column="USER_TYPE" jdbcType="VARCHAR" property="userType" />
+		<result column="SHOW_NAME" jdbcType="VARCHAR" property="showName" />
+		<result column="USER_MOBILE" jdbcType="VARCHAR" property="userMobile" />
+		<result column="SEX" jdbcType="VARCHAR" property="sex" />
+		<result column="AVATAR" jdbcType="VARCHAR" property="avatar" />
+		<result column="CERT_TYPE" jdbcType="VARCHAR" property="certType" />
+		<result column="CERT_NUMBER" jdbcType="VARCHAR" property="certNumber" />
+		<result column="NIKE_NAME" jdbcType="VARCHAR" property="nikeName" />
+		<result column="QQ" jdbcType="VARCHAR" property="qq" />
+		<result column="WEIXIN" jdbcType="VARCHAR" property="weixin" />
+		<result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+		<result column="LAST_LOGIN_DATE" jdbcType="TIMESTAMP" property="lastLoginDate" />
+		<result column="GRADE" jdbcType="INTEGER" property="grade" />
+		<result column="USER_STATUS" jdbcType="VARCHAR" property="userStatus" />
+		<result column="AREA_ID" jdbcType="VARCHAR" property="areaId" />
+		<result column="AREA_NAME" jdbcType="VARCHAR" property="areaName" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, NAME, PASSWORD, USER_TYPE, SHOW_NAME, USER_MOBILE, SEX, AVATAR,
+		CERT_TYPE, CERT_NUMBER,
+		NIKE_NAME, QQ, WEIXIN, CREATE_DATE, LAST_LOGIN_DATE, GRADE, USER_STATUS, AREA_ID,
+		(SELECT AREA_NAME FROM AREA  WHERE AREA_ID=b.AREA_ID) AS AREA_NAME 
+	</sql>
+
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from USERS b
+         where ID = #{id,jdbcType=VARCHAR}                    
+	</select>
+
+	<select id="selectOne" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from USERS b
+		<where>
+		    <if test="userType != null and userType != ''">
+              <![CDATA[ 
+               AND  USER_TYPE= #{userType ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="id != null and id != ''">
+                    <![CDATA[ 
+                     AND ID = #{id,jdbcType=VARCHAR}                    
+                    ]]>
+			</if>
+			<if test="certNumber != null and certNumber != ''">
+                    <![CDATA[ 
+                     AND CERT_NUMBER = #{certNumber,jdbcType=VARCHAR}                    
+                    ]]>
+			</if>
+			<if test="name != null and name != ''">
+                    <![CDATA[ 
+                     AND name = #{name ,jdbcType=VARCHAR }                    
+                    ]]>
+			</if>
+			<if test="password != null and password != ''">
+                    <![CDATA[ 
+                     AND PASSWORD = #{password ,jdbcType=VARCHAR }                    
+                    ]]>
+			</if>
+			<if test="userMobile != null and userMobile != ''">
+                    <![CDATA[ 
+                     AND USER_MOBILE = #{userMobile ,jdbcType=VARCHAR }                    
+                    ]]>
+			</if>
+		</where>
+	</select>
+	
+	<!-- <select id="selectUserCount" resultMap="java.lang.Integer">
+		select
+           count(CERT_NUMBER)		
+           from USERS
+		<where>
+			<if test="id != null and id != ''">
+                    <![CDATA[ 
+                     AND ID = #{id,jdbcType=VARCHAR}                    
+                    ]]>
+			</if>
+			<if test="certNumber != null and certNumber != ''">
+                    <![CDATA[ 
+                     AND CERT_NUMBER = #{certNumber,jdbcType=VARCHAR}                    
+                    ]]>
+			</if>
+			<if test="name != null and name != ''">
+                    <![CDATA[ 
+                     AND name = #{name ,jdbcType=VARCHAR }                    
+                    ]]>
+			</if>
+			<if test="password != null and password != ''">
+                    <![CDATA[ 
+                     AND PASSWORD = #{password ,jdbcType=VARCHAR }                    
+                    ]]>
+			</if>
+			<if test="userMobile != null and userMobile != ''">
+                    <![CDATA[ 
+                     AND USER_MOBILE = #{userMobile ,jdbcType=VARCHAR }                    
+                    ]]>
+			</if>
+		</where>
+	</select> -->
+
+
+	<select id="selectList" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from USERS b
+		<where>
+		   
+			<if test="userType != null and userType != ''">
+                    <![CDATA[ 
+                     AND USER_TYPE = #{userType,jdbcType=VARCHAR}                    
+                    ]]>
+			</if>
+			<if test="id != null and id != ''">
+                    <![CDATA[ 
+                     AND ID = #{id,jdbcType=VARCHAR}                    
+                    ]]>
+			</if>
+			<if test="certNumber != null and certNumber != ''">
+                    <![CDATA[ 
+                     AND CERT_NUMBER = #{certNumber,jdbcType=VARCHAR}                    
+                    ]]>
+			</if>
+			<if test="areaId != null and areaId != ''">
+			    AND area_id in
+			    <foreach item="item" collection="areaId" separator="," open="(" close=")" index="">
+			      #{item, jdbcType=VARCHAR}
+			    </foreach>
+		   </if>
+			<if test="nikeName != null and nikeName != ''">
+                    <![CDATA[ 
+                     AND NIKE_NAME = #{nikeName,jdbcType=VARCHAR}                    
+                    ]]>
+			</if>
+			<if test="userMobile != null and userMobile != ''">
+                    <![CDATA[ 
+                     AND USER_MOBILE = #{userMobile ,jdbcType=VARCHAR }                    
+                    ]]>
+			</if>
+		</where>
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from USERS
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="insert" parameterType="User">
+		insert into USERS (ID, NAME, PASSWORD,
+		USER_TYPE, SHOW_NAME, USER_MOBILE,
+		SEX, AVATAR, CERT_TYPE,
+		CERT_NUMBER, NIKE_NAME, QQ,
+		WEIXIN, CREATE_DATE, LAST_LOGIN_DATE,
+		GRADE, USER_STATUS, AREA_ID
+		)
+		values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+		#{password,jdbcType=VARCHAR},
+		#{userType,jdbcType=VARCHAR}, #{showName,jdbcType=VARCHAR}, #{userMobile,jdbcType=VARCHAR},
+		#{sex,jdbcType=VARCHAR}, #{avatar,jdbcType=VARCHAR},
+		#{certType,jdbcType=VARCHAR},
+		#{certNumber,jdbcType=VARCHAR}, #{nikeName,jdbcType=VARCHAR}, #{qq,jdbcType=VARCHAR},
+		#{weixin,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP},
+		#{lastLoginDate,jdbcType=TIMESTAMP},
+		#{grade,jdbcType=DECIMAL}, #{userStatus,jdbcType=VARCHAR}, #{areaId,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<insert id="insertSelective" parameterType="User">
+		insert into USERS
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			
+				ID,
+			
+			<if test="name != null">
+				NAME,
+			</if>
+			<if test="password != null">
+				PASSWORD,
+			</if>
+			<if test="userType != null">
+				USER_TYPE,
+			</if>
+			<if test="showName != null">
+				SHOW_NAME,
+			</if>
+			<if test="userMobile != null">
+				USER_MOBILE,
+			</if>
+			<if test="sex != null">
+				SEX,
+			</if>
+			<if test="avatar != null">
+				AVATAR,
+			</if>
+			<if test="certType != null">
+				CERT_TYPE,
+			</if>
+			<if test="certNumber != null">
+				CERT_NUMBER,
+			</if>
+			<if test="nikeName != null">
+				NIKE_NAME,
+			</if>
+			<if test="qq != null">
+				QQ,
+			</if>
+			<if test="weixin != null">
+				WEIXIN,
+			</if>
+			<if test="createDate != null">
+				CREATE_DATE,
+			</if>
+			<if test="lastLoginDate != null">
+				LAST_LOGIN_DATE,
+			</if>
+			<if test="grade != null">
+				GRADE,
+			</if>
+			<if test="userStatus != null">
+				USER_STATUS,
+			</if>
+			<if test="areaId != null">
+				AREA_ID,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			
+				sys_guid(),
+			
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				#{password,jdbcType=VARCHAR},
+			</if>
+			<if test="userType != null">
+				#{userType,jdbcType=VARCHAR},
+			</if>
+			<if test="showName != null">
+				#{showName,jdbcType=VARCHAR},
+			</if>
+			<if test="userMobile != null">
+				#{userMobile,jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null">
+				#{sex,jdbcType=VARCHAR},
+			</if>
+			<if test="avatar != null">
+				#{avatar,jdbcType=VARCHAR},
+			</if>
+			<if test="certType != null">
+				#{certType,jdbcType=VARCHAR},
+			</if>
+			<if test="certNumber != null">
+				#{certNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="nikeName != null">
+				#{nikeName,jdbcType=VARCHAR},
+			</if>
+			<if test="qq != null">
+				#{qq,jdbcType=VARCHAR},
+			</if>
+			<if test="weixin != null">
+				#{weixin,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastLoginDate != null">
+				#{lastLoginDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="grade != null">
+				#{grade,jdbcType=DECIMAL},
+			</if>
+			<if test="userStatus != null">
+				#{userStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="areaId != null">
+				#{areaId,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+
+
+	<update id="updateByPrimaryKeySelective" parameterType="User">
+		update USERS
+		<set>
+			<if test="name != null">
+				NAME = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				PASSWORD = #{password,jdbcType=VARCHAR},
+			</if>
+			<if test="userType != null">
+				USER_TYPE = #{userType,jdbcType=VARCHAR},
+			</if>
+			<if test="showName != null">
+				SHOW_NAME = #{showName,jdbcType=VARCHAR},
+			</if>
+			<if test="userMobile != null">
+				USER_MOBILE = #{userMobile,jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null">
+				SEX = #{sex,jdbcType=VARCHAR},
+			</if>
+			<if test="avatar != null">
+				AVATAR = #{avatar,jdbcType=VARCHAR},
+			</if>
+			<if test="certType != null">
+				CERT_TYPE = #{certType,jdbcType=VARCHAR},
+			</if>
+			<if test="certNumber != null">
+				CERT_NUMBER = #{certNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="nikeName != null">
+				NIKE_NAME = #{nikeName,jdbcType=VARCHAR},
+			</if>
+			<if test="qq != null">
+				QQ = #{qq,jdbcType=VARCHAR},
+			</if>
+			<if test="weixin != null">
+				WEIXIN = #{weixin,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastLoginDate != null">
+				LAST_LOGIN_DATE = #{lastLoginDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="grade != null">
+				GRADE = #{grade,jdbcType=DECIMAL},
+			</if>
+			<if test="userStatus != null">
+				USER_STATUS = #{userStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="areaId != null">
+				AREA_ID = #{areaId,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+
+
+	<update id="updateByPrimaryKey" parameterType="User">
+		update USERS
+		set NAME = #{name,jdbcType=VARCHAR},
+		PASSWORD = #{password,jdbcType=VARCHAR},
+		USER_TYPE = #{userType,jdbcType=VARCHAR},
+		SHOW_NAME = #{showName,jdbcType=VARCHAR},
+		USER_MOBILE = #{userMobile,jdbcType=VARCHAR},
+		SEX = #{sex,jdbcType=VARCHAR},
+		AVATAR = #{avatar,jdbcType=VARCHAR},
+		CERT_TYPE = #{certType,jdbcType=VARCHAR},
+		CERT_NUMBER = #{certNumber,jdbcType=VARCHAR},
+		NIKE_NAME = #{nikeName,jdbcType=VARCHAR},
+		QQ = #{qq,jdbcType=VARCHAR},
+		WEIXIN = #{weixin,jdbcType=VARCHAR},
+		CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+		LAST_LOGIN_DATE = #{lastLoginDate,jdbcType=TIMESTAMP},
+		GRADE = #{grade,jdbcType=DECIMAL},
+		USER_STATUS = #{userStatus,jdbcType=VARCHAR},
+		AREA_ID = #{areaId,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+
+</mapper>

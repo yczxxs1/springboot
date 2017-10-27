@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.google.business.dao.MessageDAO">
+
+  <resultMap id="BaseResultMap" type="MessageEntity">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="TITLE" jdbcType="VARCHAR" property="title" />
+    <result column="CONTENT" jdbcType="VARCHAR" property="content" />
+    <result column="MESSAGETYPE" jdbcType="VARCHAR" property="messagetype" />
+    <result column="HAPPENTIME" jdbcType="TIMESTAMP" property="happentime" />
+    <!-- <result column="CURRENTTIME" jdbcType="TIMESTAMP" property="currenttime" /> -->
+    <result column="FLAG" jdbcType="VARCHAR" property="flag" />
+    <result column="USERID" jdbcType="VARCHAR" property="userId" />
+    <result column="URL_FLAG" jdbcType="INTEGER" property="urlFlag" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    ID, TITLE, CONTENT, MESSAGETYPE, HAPPENTIME, FLAG,USERID,URL_FLAG
+  </sql>
+  
+  <select id="selectMessageList" parameterType="MessageEntity" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from MESSAGE
+    <where>
+      <if test="id != null and id != ''">
+                <![CDATA[ 
+                  AND ID = #{id,jdbcType=VARCHAR}
+                ]]>
+            </if>
+            
+            <if test="messagetype != null and messagetype != ''">
+                <![CDATA[ 
+                  AND MESSAGETYPE = #{messagetype,jdbcType=VARCHAR}
+                ]]>
+            </if>
+              <if test="userId != null and userId != ''">
+                <![CDATA[ 
+                  AND USERID = #{userId,jdbcType=VARCHAR}
+                ]]>
+            </if>
+    </where>
+      order by HAPPENTIME desc
+  </select>
+  
+  
+  <select id="selectListByTime"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from MESSAGE
+    where MESSAGETYPE='1'
+             <if test="content != null and content != ''">
+                <![CDATA[ 
+                  AND CONTENT like  concat(concat('%',#{content,jdbcType=VARCHAR }),'%')
+                ]]>
+            </if>
+             <if test="title != null and title != ''">
+                <![CDATA[ 
+                  AND TITLE like  concat(concat('%',#{title,jdbcType=VARCHAR }),'%')
+                ]]>
+            </if>
+             <if test="startTime != null ">
+                <![CDATA[ 
+                  AND HAPPENTIME >  #{startTime,jdbcType=TIMESTAMP} 
+                ]]>
+            </if>
+             <if test="endTime != null ">
+                <![CDATA[ 
+                  AND HAPPENTIME <  #{endTime,jdbcType=TIMESTAMP} 
+                ]]>
+            </if>
+            
+    
+      order by HAPPENTIME desc
+  </select>
+  
+  
+  
+  <select id="selectMessageDetail" parameterType="MessageEntity" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from MESSAGE
+    <where>
+      <if test="id != null and id != ''">
+                <![CDATA[ 
+                  AND ID = #{id,jdbcType=VARCHAR}
+                ]]>
+            </if>
+            
+            <if test="messagetype != null and messagetype != ''">
+                <![CDATA[ 
+                  AND MESSAGETYPE = #{messagetype,jdbcType=VARCHAR}
+                ]]>
+            </if>
+              <if test="userId != null and userId != ''">
+                <![CDATA[ 
+                  AND USERID = #{userId,jdbcType=VARCHAR}
+                ]]>
+            </if>
+    </where>
+      order by HAPPENTIME desc
+  </select>
+  
+   <select id="selectMessageList_count" parameterType="MessageEntity" resultType="java.lang.Integer">
+    select 
+     count(0)
+    from MESSAGE
+    <where>
+      <if test="id != null and id != ''">
+                <![CDATA[ 
+                  AND ID = #{id,jdbcType=VARCHAR}
+                ]]>
+            </if>
+            
+            <if test="messagetype != null and messagetype != ''">
+                <![CDATA[ 
+                  AND MESSAGETYPE = #{messagetype,jdbcType=VARCHAR}
+                ]]>
+            </if>
+             <if test="userId != null and userId != ''">
+                <![CDATA[ 
+                  AND USERID = #{userId,jdbcType=VARCHAR}
+                ]]>
+            </if>
+    </where>
+  </select>
+  
+  <delete id="deleteMessage" parameterType="java.lang.String">
+    delete from MESSAGE
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  
+  
+  
+  
+  <insert id="insertMessage" parameterType="MessageEntity" 
+  keyProperty="id" useGeneratedKeys="true">
+  <selectKey keyProperty="id" order="BEFORE" resultType="java.lang.String">
+			select sys_guid() from dual
+		</selectKey> 
+    insert into MESSAGE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      
+        ID,
+      
+      <if test="title != null">
+        TITLE,
+      </if>
+      <if test="content != null">
+        CONTENT,
+      </if>
+      <if test="messagetype != null">
+        MESSAGETYPE,
+      </if>
+      <if test="happentime != null">
+        HAPPENTIME,
+      </if>
+     
+      <if test="flag != null">
+        FLAG,
+      </if>
+       <if test="urlFlag != null">
+        URL_FLAG,
+      </if>
+      <if test="userId != null">
+        USERID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      
+        #{id,jdbcType=VARCHAR},
+      
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="messagetype != null">
+        #{messagetype,jdbcType=VARCHAR},
+      </if>
+      <if test="happentime != null">
+        #{happentime,jdbcType=TIMESTAMP},
+      </if>
+      
+      <if test="flag != null">
+        #{flag,jdbcType=VARCHAR},
+      </if>
+      
+      <if test="urlFlag != null">
+        #{urlFlag,jdbcType=INTEGER},
+      </if>
+      
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  
+  <update id="updateMessage" parameterType="MessageEntity">
+    update MESSAGE
+    <set>
+      <if test="title != null">
+        TITLE = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        CONTENT = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="messagetype != null">
+        MESSAGETYPE = #{messagetype,jdbcType=VARCHAR},
+      </if>
+      <if test="happentime != null">
+        HAPPENTIME = #{happentime,jdbcType=TIMESTAMP},
+      </if>
+     
+      <if test="flag != null">
+        FLAG = #{flag,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  
+   <delete id="deleteM" parameterType="MessageEntity">
+    delete from MESSAGE
+    <where>
+            <if test="id != null">
+                <![CDATA[ 
+                  AND ID = #{id,jdbcType=VARCHAR}
+                ]]>
+            </if>
+      </where>
+  </delete> 
+  
+  
+</mapper>

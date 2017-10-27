@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.google.business.dao.FencePointDAO">
+  <resultMap id="BaseResultMap" type="FencePoint">
+    <id column="FID" jdbcType="VARCHAR" property="fid" />
+    <result column="LONGITUDE" jdbcType="DOUBLE" property="longitude" />
+    <result column="LATITUDE" jdbcType="DOUBLE" property="latitude" />
+  </resultMap>
+  
+  <resultMap id="BaseResultMap2" type="FenceInfo">
+    <id column="FID" jdbcType="VARCHAR" property="fid" />
+    <result column="FENCEID" jdbcType="INTEGER" property="fenceid" />
+    <result column="MONITED_PERSON" jdbcType="VARCHAR" property="monitedPerson" />
+    <result column="FENCE_NAME" jdbcType="VARCHAR" property="fenceName" />
+    <result column="FENCE_START" jdbcType="VARCHAR" property="fenceStart" />
+    <result column="FENCE_END" jdbcType="VARCHAR" property="fenceEnd" />
+    <result column="FENCE_HEIGHT" jdbcType="VARCHAR" property="fenceHeight" />
+    <result column="FENCE_TYPE" jdbcType="VARCHAR" property="fenceType" />
+    <result column="DISTANCE" jdbcType="VARCHAR" property="distance"/>
+  </resultMap>
+  
+  
+  <resultMap id="BaseResultMap3" type="FenceInfo2">
+    <id column="FID" jdbcType="VARCHAR" property="fid" />
+    <result column="FENCEID" jdbcType="INTEGER" property="fenceid" />
+    <result column="MONITED_PERSON" jdbcType="VARCHAR" property="monitedPerson" />
+    <result column="FENCE_NAME" jdbcType="VARCHAR" property="fenceName" />
+    <result column="FENCE_START" jdbcType="VARCHAR" property="fenceStart" />
+    <result column="FENCE_END" jdbcType="VARCHAR" property="fenceEnd" />
+    <result column="FENCE_HEIGHT" jdbcType="VARCHAR" property="fenceHeight" />
+    <result column="FENCE_TYPE" jdbcType="VARCHAR" property="fenceType" />
+    <result column="LONGITUDE" jdbcType="VARCHAR" property="longitude"/>
+    <result column="LATITUDE" jdbcType="VARCHAR" property="latitude"/>
+    <result column="STATUS" jdbcType="VARCHAR" property="status"/>
+    <result column="DISTANCE" jdbcType="VARCHAR" property="distance"/>
+  </resultMap>
+  
+  
+  <sql id="Base_Column_List">
+    FID, LONGITUDE, LATITUDE
+  </sql>
+  
+  <select id="selectPOI" parameterType="FencePoint" resultMap="BaseResultMap3">
+   <![CDATA[ 
+		   select b.*,a.distance,a.latitude,a.longitude from
+		(select 
+		fid,latitude,longitude,6366000*acos(
+		  cos(#{latitude,jdbcType=DOUBLE}/57.29400418246231)
+		  *cos(#{longitude,jdbcType=DOUBLE}/57.29400418246231)
+		  *cos(latitude/57.29400418246231) 
+		  *cos(longitude/57.29400418246231)+
+		  
+		  cos(#{latitude,jdbcType=DOUBLE}/57.29400418246231)
+		  *sin(#{longitude,jdbcType=DOUBLE}/57.29400418246231)
+		  *cos(latitude/57.29400418246231) 
+		  *sin(longitude/57.29400418246231)+
+		  
+		  sin(#{latitude,jdbcType=DOUBLE}/57.29400418246231)*sin(latitude/57.29400418246231)) as distance 
+		 from fencepoint) a
+		left join fenceinfo b
+		on a.fid=b.fid
+		where distance<500 order by fence_height desc
+ ]]>
+  </select>
+  
+  
+  <select id="selectFencePoint" parameterType="FencePoint" resultMap="BaseResultMap3">
+   <![CDATA[ 
+		select b.*,a.distance,a.latitude,a.longitude,case when distance<500 then 'in' else 'out' end as status from
+(select 
+fid,longitude,latitude,6366000*acos(
+  cos(#{latitude,jdbcType=DOUBLE}/57.29400418246231)
+  *cos(#{longitude,jdbcType=DOUBLE}/57.29400418246231)
+  *cos(latitude/57.29400418246231) 
+  *cos(longitude/57.29400418246231)+
+  
+  cos(#{latitude,jdbcType=DOUBLE}/57.29400418246231)
+  *sin(#{longitude,jdbcType=DOUBLE}/57.29400418246231)
+  *cos(latitude/57.29400418246231) 
+  *sin(longitude/57.29400418246231)+
+  
+  sin(#{latitude,jdbcType=DOUBLE}/57.29400418246231)*sin(latitude/57.29400418246231)) as distance 
+ from fencepoint) a
+left join fenceinfo b
+on a.fid=b.fid where distance<500 order by fence_height desc
+ ]]>
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from FENCEPOINT
+    where FID = #{fid,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="FencePoint">
+    insert into FENCEPOINT (FID, LONGITUDE, LATITUDE
+      )
+    values (#{fid,jdbcType=VARCHAR}, #{longitude,jdbcType=DOUBLE}, #{latitude,jdbcType=DOUBLE}
+      )
+  </insert>
+  
+  <insert id="insertSelective" parameterType="FencePoint">
+    insert into FENCEPOINT
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="fid != null">
+        FID,
+      </if>
+      <if test="longitude != null">
+        LONGITUDE,
+      </if>
+      <if test="latitude != null">
+        LATITUDE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="fid != null">
+        #{fid,jdbcType=VARCHAR},
+      </if>
+      <if test="longitude != null">
+        #{longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="latitude != null">
+        #{latitude,jdbcType=DOUBLE},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="FencePoint">
+    update FENCEPOINT
+    <set>
+      <if test="longitude != null">
+        LONGITUDE = #{longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="latitude != null">
+        LATITUDE = #{latitude,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where FID = #{fid,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="FencePoint">
+    update FENCEPOINT
+    set LONGITUDE = #{longitude,jdbcType=DOUBLE},
+      LATITUDE = #{latitude,jdbcType=DOUBLE}
+    where FID = #{fid,jdbcType=VARCHAR}
+  </update>
+  
+</mapper>

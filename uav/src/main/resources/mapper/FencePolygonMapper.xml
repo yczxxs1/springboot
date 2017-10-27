@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.google.business.dao.FencePolygonDAO">
+  <resultMap id="BaseResultMap1" type="FencePolygon">
+    <id column="FPID" jdbcType="VARCHAR" property="fpid" />
+    <result column="LATITUDE" jdbcType="DOUBLE" property="latitude" />
+    <result column="LONGITUDE" jdbcType="DOUBLE" property="longitude" />
+    <result column="FID" jdbcType="VARCHAR" property="fid" />
+     <result column="DISTANCE" jdbcType="DOUBLE" property="distance"/>
+  </resultMap>
+  
+  <resultMap id="BaseResultMap2" type="FenceInfo">
+    <id column="FID" jdbcType="VARCHAR" property="fid" />
+    <result column="FENCEID" jdbcType="INTEGER" property="fenceid" />
+    <result column="MONITED_PERSON" jdbcType="VARCHAR" property="monitedPerson" />
+    <result column="FENCE_NAME" jdbcType="VARCHAR" property="fenceName" />
+    <result column="FENCE_START" jdbcType="VARCHAR" property="fenceStart" />
+    <result column="FENCE_END" jdbcType="VARCHAR" property="fenceEnd" />
+    <result column="FENCE_HEIGHT" jdbcType="VARCHAR" property="fenceHeight" />
+    <result column="FENCE_TYPE" jdbcType="VARCHAR" property="fenceType" />
+    <result column="DISTANCE" jdbcType="VARCHAR" property="distance"/>
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    FPID, LATITUDE, LONGITUDE, FID
+  </sql>
+  
+  <select id="selectFencePolygon" parameterType="FencePolygon" resultMap="BaseResultMap2">
+  <![CDATA[ 
+select b.*,a.distance
+from(select 
+fid,min(6366000*acos(
+  cos(#{latitude,jdbcType=DOUBLE}/57.29400418246231)
+  *cos(#{longitude,jdbcType=DOUBLE}/57.29400418246231)
+  *cos(latitude/57.29400418246231) 
+  *cos(longitude/57.29400418246231)+
+  
+  cos(#{latitude,jdbcType=DOUBLE}/57.29400418246231)
+  *sin(#{longitude,jdbcType=DOUBLE}/57.29400418246231)
+  *cos(latitude/57.29400418246231) 
+  *sin(longitude/57.29400418246231)+
+  
+  sin(#{latitude,jdbcType=DOUBLE}/57.29400418246231)*sin(latitude/57.29400418246231))) as distance 
+from fencepolygon group by fid ) a
+right join fenceinfo b on a.fid=b.fid
+where 1000>=distance order by distance
+  ]]>
+  </select>
+  
+  <delete id="deleteFencePolygon" parameterType="java.lang.String">
+    delete from FENCEPOLYGON
+    where FPID = #{fpid,jdbcType=VARCHAR}
+  </delete>
+  
+  
+  <insert id="insertFencePolygon" parameterType="FencePolygon">
+    insert into FENCEPOLYGON
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="fpid != null">
+        FPID,
+      </if>
+      <if test="latitude != null">
+        LATITUDE,
+      </if>
+      <if test="longitude != null">
+        LONGITUDE,
+      </if>
+      <if test="fid != null">
+        FID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="fpid != null">
+        #{fpid,jdbcType=VARCHAR},
+      </if>
+      <if test="latitude != null">
+        #{latitude,jdbcType=DOUBLE},
+      </if>
+      <if test="longitude != null">
+        #{longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="fid != null">
+        #{fid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateFencePolygon" parameterType="FencePolygon">
+    update FENCEPOLYGON
+    <set>
+      <if test="latitude != null">
+        LATITUDE = #{latitude,jdbcType=DOUBLE},
+      </if>
+      <if test="longitude != null">
+        LONGITUDE = #{longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="fid != null">
+        FID = #{fid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where FPID = #{fpid,jdbcType=VARCHAR}
+  </update>
+  
+ 
+</mapper>

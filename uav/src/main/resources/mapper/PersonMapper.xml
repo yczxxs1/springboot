@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.google.business.dao.PersonDAO">
+  <resultMap id="BaseResultMap" type="Person">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="RESIDENCE_ADDRESS" jdbcType="VARCHAR" property="residenceAddress" />
+    <result column="CENSUS_REGISTER_ADDRESS" jdbcType="VARCHAR" property="censusRegisterAddress" />
+    <result column="EMAIL" jdbcType="VARCHAR" property="email" />
+    <result column="USER_ID" jdbcType="VARCHAR" property="userId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, RESIDENCE_ADDRESS, CENSUS_REGISTER_ADDRESS, EMAIL, USER_ID
+  </sql>
+  
+  <select id="selectOne" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from PERSON
+    where
+    USER_ID = #{userId,jdbcType=VARCHAR}
+  </select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from PERSON
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="Person">
+    insert into PERSON (ID, RESIDENCE_ADDRESS, CENSUS_REGISTER_ADDRESS, 
+      EMAIL, USER_ID)
+    values (#{id,jdbcType=VARCHAR}, #{residenceAddress,jdbcType=VARCHAR}, #{censusRegisterAddress,jdbcType=VARCHAR}, 
+      #{email,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="Person">
+    insert into PERSON
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+        ID,
+      <if test="residenceAddress != null">
+        RESIDENCE_ADDRESS,
+      </if>
+      <if test="censusRegisterAddress != null">
+        CENSUS_REGISTER_ADDRESS,
+      </if>
+      <if test="email != null">
+        EMAIL,
+      </if>
+      <if test="userId != null">
+        USER_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+        sys_guid(),
+      <if test="residenceAddress != null">
+        #{residenceAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="censusRegisterAddress != null">
+        #{censusRegisterAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="Person">
+    update PERSON
+    <set>
+      <if test="residenceAddress != null">
+        RESIDENCE_ADDRESS = #{residenceAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="censusRegisterAddress != null">
+        CENSUS_REGISTER_ADDRESS = #{censusRegisterAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        EMAIL = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        USER_ID = #{userId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="Person">
+    update PERSON
+    set RESIDENCE_ADDRESS = #{residenceAddress,jdbcType=VARCHAR},
+      CENSUS_REGISTER_ADDRESS = #{censusRegisterAddress,jdbcType=VARCHAR},
+      EMAIL = #{email,jdbcType=VARCHAR},
+      USER_ID = #{userId,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

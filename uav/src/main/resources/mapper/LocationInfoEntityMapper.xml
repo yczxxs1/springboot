@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.google.business.dao.LocationInfoDAO">
+	<resultMap id="BaseResultMap" type="LocationInfoEntity">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="LOCATION" jdbcType="VARCHAR" property="location" />
+		<result column="LONGITUDE" jdbcType="DOUBLE" property="longitude" />
+		<result column="LATITUDE" jdbcType="DOUBLE" property="latitude" />
+		<result column="LOCATION_IMG" jdbcType="VARCHAR" property="locationImg" />
+		<result column="HAPPEN_TIME" jdbcType="TIMESTAMP" property="happenTime" />
+		<result column="USERID" jdbcType="VARCHAR" property="userId" />
+	</resultMap>
+
+
+	<sql id="Base_Column_List">
+		A.ID, LOCATION, LONGITUDE, LATITUDE,
+		LOCATION_IMG,HAPPEN_TIME,USERID
+	</sql>
+
+
+	<select id="selectLocationInfo" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from LOCATIONINFO A LEFT JOIN USERS B ON A.USERID=B.ID 
+		<where>
+
+			<if test="userId != null and userId != ''">
+          <![CDATA[ 
+           AND USERID = #{userId ,jdbcType=VARCHAR }                    
+          ]]>
+			</if>
+			<if test="areaId != null and areaId != ''">
+				AND AREA_ID IN
+				<foreach item="item" collection="areaId" separator="," open="("
+					close=")" index="">
+					#{item, jdbcType=VARCHAR}
+				</foreach>
+			</if>
+		</where>
+		ORDER BY HAPPEN_TIME DESC
+	</select>
+
+	<select id="selectLocationInfoForTime" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM LOCATIONINFO A LEFT JOIN USERS B ON A.USERID=B.ID 
+		<where>
+
+			<if test="startTime != null  and endTime != null ">
+          <![CDATA[ 
+           HAPPEN_TIME  between #{startTime ,jdbcType=TIMESTAMP } and  #{endTime ,jdbcType=TIMESTAMP }         
+          ]]>
+			</if>
+			<if test="startTime == null and endTime != null">
+          <![CDATA[ 
+             HAPPEN_TIME <   #{endTime ,jdbcType=TIMESTAMP }        
+          ]]>
+			</if>
+			<if test="startTime != null and endTime == null ">
+          <![CDATA[ 
+              HAPPEN_TIME >  #{startTime ,jdbcType=TIMESTAMP }        
+          ]]>
+			</if>
+			<if test="areaId != null and areaId != ''">
+				AND AREA_ID IN
+				<foreach item="item" collection="areaId" separator="," open="("
+					close=")" index="">
+					#{item, jdbcType=VARCHAR}
+				</foreach>
+			</if>
+		</where>
+		ORDER BY HAPPEN_TIME DESC
+	</select>
+
+
+
+
+
+	<select id="selectLocationInfo_count" resultType="java.lang.Integer">
+		select
+		count(0)
+		from LOCATIONINFO
+		<where>
+			<if test="userId != null and userId != ''">
+          <![CDATA[ 
+           AND USERID = #{userId ,jdbcType=VARCHAR }                    
+          ]]>
+			</if>
+		</where>
+	</select>
+
+	<select id="selectLocationInfoForTwoHour" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from LOCATIONINFO
+		<where>
+			happen_time between sysdate - 2/24 and sysdate
+		</where>
+		ORDER BY HAPPEN_TIME DESC
+	</select>
+
+	<select id="selectLocationInfoForTheDay" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		FROM LOCATIONINFO A LEFT JOIN USERS B ON A.USERID=B.ID 
+		<where>
+			happen_time between sysdate - 1 and sysdate
+			<if test="areaId != null and areaId != ''">
+				AND AREA_ID IN
+				<foreach item="item" collection="areaId" separator="," open="("
+					close=")" index="">
+					#{item, jdbcType=VARCHAR}
+				</foreach>
+			</if>
+		</where>
+		ORDER BY HAPPEN_TIME DESC
+	</select>
+
+
+	<insert id="insertLocationInfo" parameterType="LocationInfoEntity"
+		keyProperty="id" useGeneratedKeys="true">
+		<selectKey keyProperty="id" order="BEFORE" resultType="java.lang.String">
+			select sys_guid() from dual
+		</selectKey>
+
+		insert into LOCATIONINFO
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+
+			ID,
+
+			<if test="location != null">
+				LOCATION,
+			</if>
+			<if test="longitude != null">
+				LONGITUDE,
+			</if>
+			<if test="latitude != null">
+				LATITUDE,
+			</if>
+			<if test="locationImg != null">
+				LOCATION_IMG,
+			</if>
+			<if test="userId != null and userId != ''">
+          <![CDATA[ 
+          USERID,                   
+          ]]>
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+
+			#{id ,jdbcType=VARCHAR },
+
+			<if test="location != null">
+				#{location,jdbcType=VARCHAR},
+			</if>
+			<if test="longitude != null">
+				#{longitude,jdbcType=DOUBLE},
+			</if>
+			<if test="latitude != null">
+				#{latitude,jdbcType=DOUBLE},
+			</if>
+			<if test="locationImg != null">
+				#{locationImg,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+
+
+	<update id="updateLocationInfo" parameterType="LocationInfoEntity">
+		update LOCATIONINFO
+		<set>
+			<if test="location != null">
+				LOCATION = #{location,jdbcType=VARCHAR},
+			</if>
+			<if test="longitude != null">
+				LONGITUDE = #{longitude,jdbcType=DOUBLE},
+			</if>
+			<if test="latitude != null">
+				LATITUDE = #{latitude,jdbcType=DOUBLE},
+			</if>
+			<if test="locationImg != null">
+				LOCATION_IMG = #{locationImg,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+
+</mapper>

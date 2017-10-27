@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.google.business.dao.AdminDAO">
+  <resultMap id="BaseResultMap" type="AdminEntity">
+  <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="PASSWORD" jdbcType="VARCHAR" property="password" />
+    <result column="NIKE_NAME" jdbcType="VARCHAR" property="nikeName" />
+    <result column="SEX" jdbcType="VARCHAR" property="sex" />
+    <result column="DEPT" jdbcType="VARCHAR" property="dept" />
+    <result column="AVATAR" jdbcType="VARCHAR" property="avatar" />
+    <result column="POLICE_NUMBER" jdbcType="VARCHAR" property="policeNumber" />
+    <result column="AREA_ID" jdbcType="VARCHAR" property="areaId" />
+    <result column="EMAIL" jdbcType="VARCHAR" property="email" />
+    <result column="PHONE" jdbcType="VARCHAR" property="phone" />
+    <result column="ROLE_ID" jdbcType="VARCHAR" property="roleId" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_LOGIN_DATE" jdbcType="TIMESTAMP" property="lastLoginDate" />
+    <result column="TERMINAL_ACCESS" jdbcType="VARCHAR" property="terminalAccess" />
+    <result column="STATUS" jdbcType="VARCHAR" property="status" />
+    <result column="EFFECTIVE_DATE" jdbcType="TIMESTAMP" property="effectiveDate" />
+    <result column="MODEL_ID" jdbcType="VARCHAR" property="modelId" />  
+    <result column="ROLE_NAME" jdbcType="VARCHAR" property="roleName"/>
+    <result column="AREA_NAME" jdbcType="VARCHAR" property="areaName"/>
+    <result column="AREA_FATHER" jdbcType="VARCHAR" property="areaFather"/>
+    <result column="AGENCY_ID" jdbcType="VARCHAR" property="agencyId"/>
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    ID, NAME, PASSWORD, NIKE_NAME, SEX, DEPT, AVATAR, POLICE_NUMBER, AREA_ID, EMAIL, 
+    PHONE, ROLE_ID, CREATE_DATE, LAST_LOGIN_DATE, TERMINAL_ACCESS, STATUS,EFFECTIVE_DATE,MODEL_ID,
+    (SELECT ROLE_NAME FROM ROLES WHERE ROLE_ID=ID)AS ROLE_NAME,
+    (SELECT  AREA_FATHER_ID FROM AREA WHERE ID=AREA_ID) AS AREA_FATHER,
+    (SELECT FATHER_ID FROM AGENCY WHERE ID=DEPT) AS AGENCY_ID
+  </sql>
+  
+  <select id="selectAdmin" parameterType="AdminEntity" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from MANAGER
+     <where>
+         <if test="id != null and id != ''">
+                <![CDATA[ 
+                  AND ID = #{id,jdbcType=VARCHAR}
+                ]]>
+            </if>    
+            
+            <if test="name != null and name != ''">
+                <![CDATA[ 
+                  AND name = #{name,jdbcType=VARCHAR}
+                ]]>
+            </if>     
+               <if test="password != null and password != ''">
+                <![CDATA[ 
+                  AND password = #{password,jdbcType=VARCHAR}
+                ]]>
+            </if>   
+              
+            <if test="roleId != null and roleId != ''">
+                <![CDATA[ 
+                  AND ROLE_ID = #{roleId,jdbcType=VARCHAR}
+                ]]>
+            </if>
+            <if test="nikeName != null and nikeName != ''">
+                <![CDATA[ 
+                  AND NIKE_NAME = #{nikeName,jdbcType=VARCHAR}
+                ]]>
+            </if>
+            <if test="status != null and status != ''">
+                <![CDATA[ 
+                  AND STATUS = #{status,jdbcType=VARCHAR}
+                ]]>
+            </if>
+               <if test="dept != null and dept != ''">
+                <![CDATA[ 
+                  AND DEPT = #{dept,jdbcType=VARCHAR}
+                ]]>
+            </if>
+             <if test="phone != null and phone != ''">
+                <![CDATA[ 
+                  AND phone = #{phone,jdbcType=VARCHAR}
+                ]]>
+            </if>
+             <if test="areaId != null and areaId != ''">
+                <![CDATA[ 
+                  AND AREA_ID = #{areaId,jdbcType=VARCHAR}
+                ]]>
+            </if>
+    </where>
+  </select>
+  
+  
+  <select id="selectOne" parameterType="AdminEntity" resultMap="BaseResultMap">
+    select 
+   <include refid="Base_Column_List" />
+    from MANAGER
+     <where>
+         <if test="id != null and id != ''">
+                <![CDATA[ 
+                  AND ID = #{id,jdbcType=VARCHAR}
+                ]]>
+            </if>    
+            
+            <if test="name != null and name != ''">
+                <![CDATA[ 
+                  AND name = #{name,jdbcType=VARCHAR}
+                ]]>
+            </if>     
+               <if test="password != null and password != ''">
+                <![CDATA[ 
+                  AND password = #{password,jdbcType=VARCHAR}
+                ]]>
+            </if>   
+              
+            <if test="roleId != null and roleId != ''">
+                <![CDATA[ 
+                  AND ROLE_ID = #{roleId,jdbcType=VARCHAR}
+                ]]>
+            </if>
+            <if test="nikeName != null and nikeName != ''">
+                <![CDATA[ 
+                  AND NIKE_NAME = #{nikeName,jdbcType=VARCHAR}
+                ]]>
+            </if>
+            <if test="status != null and status != ''">
+                <![CDATA[ 
+                  AND STATUS = #{status,jdbcType=VARCHAR}
+                ]]>
+            </if>
+               <if test="dept != null and dept != ''">
+                <![CDATA[ 
+                  AND DEPT = #{dept,jdbcType=VARCHAR}
+                ]]>
+            </if>
+             <if test="phone != null and phone != ''">
+                <![CDATA[ 
+                  AND phone = #{phone,jdbcType=VARCHAR}
+                ]]>
+            </if>
+             <if test="areaId != null and areaId != ''">
+                <![CDATA[ 
+                  AND AREA_ID = #{areaId,jdbcType=VARCHAR}
+                ]]>
+            </if>
+    </where>
+  </select>
+  
+  <delete id="deleteAdmin">
+    delete from MANAGER
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+ 
+ 
+  <insert id="insertAdmin">
+    insert into MANAGER
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      
+        ID,
+      
+      <if test="name != null">
+        NAME,
+      </if>
+      <if test="password != null">
+        PASSWORD,
+      </if>
+      <if test="nikeName != null">
+        NIKE_NAME,
+      </if>
+      <if test="sex != null">
+        SEX,
+      </if>
+      <if test="dept != null">
+        DEPT,
+      </if>
+      <if test="avatar != null">
+        AVATAR,
+      </if>
+      <if test="policeNumber != null">
+        POLICE_NUMBER,
+      </if>
+      <if test="areaId != null">
+        AREA_ID,
+      </if>
+      <if test="email != null">
+        EMAIL,
+      </if>
+      <if test="phone != null">
+        PHONE,
+      </if>
+      <if test="roleId != null">
+        ROLE_ID,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+      <if test="lastLoginDate != null">
+        LAST_LOGIN_DATE,
+      </if>
+      <if test="terminalAccess != null">
+        TERMINAL_ACCESS,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="effectiveDate != null">
+        EFFECTIVE_DATE,
+      </if> 
+      <if test="modelId != null">
+        MODEL_ID,
+      </if> 
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      sys_guid(),
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="nikeName != null">
+        #{nikeName,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="dept != null">
+        #{dept,jdbcType=VARCHAR},
+      </if>
+      <if test="avatar != null">
+        #{avatar,jdbcType=VARCHAR},
+      </if>
+      <if test="policeNumber != null">
+        #{policeNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="areaId != null">
+        #{areaId,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="roleId != null">
+        #{roleId,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastLoginDate != null">
+        #{lastLoginDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="terminalAccess != null">
+        #{terminalAccess,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+       <if test="effectiveDate != null">
+        #{effectiveDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modelId != null">
+        #{modelId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  
+  <update id="updateAdmin">
+    update MANAGER
+    <set>
+      <if test="name != null">
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        PASSWORD = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="nikeName != null">
+        NIKE_NAME = #{nikeName,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        SEX = #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="dept != null">
+        DEPT = #{dept,jdbcType=VARCHAR},
+      </if>
+      <if test="avatar != null">
+        AVATAR = #{avatar,jdbcType=VARCHAR},
+      </if>
+      <if test="policeNumber != null">
+        POLICE_NUMBER = #{policeNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="areaId != null">
+        AREA_ID = #{areaId,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        EMAIL = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        PHONE = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="roleId != null">
+        ROLE_ID = #{roleId,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastLoginDate != null">
+        LAST_LOGIN_DATE = #{lastLoginDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="terminalAccess != null">
+        TERMINAL_ACCESS = #{terminalAccess,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+       <if test="effectiveDate != null">
+        EFFECTIVE_DATE = #{effectiveDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modelId != null">
+        MODEL_ID = #{modelId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  
+
+ 
+</mapper>

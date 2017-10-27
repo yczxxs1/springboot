@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.google.business.dao.DictDAO" >
+  <resultMap id="BaseResultMap" type="DictEntity" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="TYPE" property="type" jdbcType="VARCHAR" />
+    <result column="VALUE" property="value" jdbcType="VARCHAR" />
+    <result column="LABEL" property="label" jdbcType="VARCHAR" />
+    <result column="CREATE_DATE" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    ID, TYPE, VALUE, LABEL, CREATE_DATE, DESCRIPTION
+  </sql>
+  
+
+  
+ 
+  
+  <select id="selectDictList" resultMap="BaseResultMap" parameterType="DictEntity" >
+    select 
+    <include refid="Base_Column_List" />
+    from DICT
+    <where>
+	    <if test="type != null and type != ''">
+	        <![CDATA[ 
+	         AND type= #{type ,jdbcType=VARCHAR }                    
+	        ]]>
+	     </if>
+    </where>
+  </select>
+  
+   <select id="selectDictList_Type" resultMap="BaseResultMap" parameterType="DictEntity" >
+    select distinct type
+    from DICT
+  </select>
+  
+  <select id="selectDictList_Label" resultType="String" parameterType="DictEntity" >
+    select label from DICT
+    <where>
+	    <if test="type != null and type != ''">
+	        <![CDATA[ 
+	         AND type= #{type ,jdbcType=VARCHAR }                    
+	        ]]>
+	     </if>
+    </where>
+  </select>
+  
+  <select id="selectDictList_count" resultType="java.lang.Integer" parameterType="DictEntity" >
+    select 
+     count(0)
+    from DICT
+  </select>
+  
+  <select id="selectDictOne" resultMap="BaseResultMap" parameterType="DictEntity" >
+    select 
+    <include refid="Base_Column_List" />
+    from DICT
+    <where>
+	    <if test="type != null and type != ''">
+	        <![CDATA[ 
+	         AND type= #{type ,jdbcType=VARCHAR }                    
+	        ]]>
+	     </if>
+	       <if test="label != null and label != ''">
+	        <![CDATA[ 
+	         AND label= #{label ,jdbcType=VARCHAR }                    
+	        ]]>
+	     </if>
+	       <if test="value != null and value != ''">
+	        <![CDATA[ 
+	         AND value= #{value ,jdbcType=VARCHAR }                    
+	        ]]>
+	     </if>
+	     <if test="id != null and id != ''">
+	        <![CDATA[ 
+	         AND ID= #{id ,jdbcType=VARCHAR }                    
+	        ]]>
+	     </if>
+	     
+    </where>
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from DICT
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from DICT
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="DictEntity" >
+    insert into DICT (ID, TYPE, VALUE, 
+      LABEL, CREATE_DATE, DESCRIPTION
+      )
+    values (#{id,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{value,jdbcType=VARCHAR}, 
+      #{label,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{description,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="DictEntity" >
+    insert into DICT
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="type != null" >
+        TYPE,
+      </if>
+      <if test="value != null" >
+        VALUE,
+      </if>
+      <if test="label != null" >
+        LABEL,
+      </if>
+      <if test="createDate != null" >
+        CREATE_DATE,
+      </if>
+      <if test="description != null" >
+        DESCRIPTION,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="value != null" >
+        #{value,jdbcType=VARCHAR},
+      </if>
+      <if test="label != null" >
+        #{label,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="DictEntity" >
+    update DICT
+    <set >
+      <if test="type != null" >
+        TYPE = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="value != null" >
+        VALUE = #{value,jdbcType=VARCHAR},
+      </if>
+      <if test="label != null" >
+        LABEL = #{label,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="description != null" >
+        DESCRIPTION = #{description,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="DictEntity" >
+    update DICT
+    set TYPE = #{type,jdbcType=VARCHAR},
+      VALUE = #{value,jdbcType=VARCHAR},
+      LABEL = #{label,jdbcType=VARCHAR},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      DESCRIPTION = #{description,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

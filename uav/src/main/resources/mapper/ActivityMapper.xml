@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.google.business.dao.ActivityDAO">
+  <resultMap id="BaseResultMap" type="com.google.business.model.Activity">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="ACTIVITY" jdbcType="VARCHAR" property="activity" />
+    <result column="ORGANIZERS" jdbcType="VARCHAR" property="organizers" />
+    <result column="CONTRACTOR_ID" jdbcType="VARCHAR" property="contractorId" />
+    <result column="CONTRACTOR_NAME" jdbcType="VARCHAR" property="contractorName" />
+    <result column="CONTRACTOR_PHONE" jdbcType="VARCHAR" property="contractorPhone" />
+    <result column="AREA_ID" jdbcType="VARCHAR" property="areaId" />
+    <result column="ADDRESS" jdbcType="VARCHAR" property="address" />
+    <result column="START_TIME" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="END_TIME" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="REVIEW" jdbcType="VARCHAR" property="review" />
+    <result column="uav_count" jdbcType="VARCHAR" property="uavCount" />
+    <result column="area_name" jdbcType="VARCHAR" property="areaName" />
+    <result column="USER_ID" jdbcType="VARCHAR" property="userId" />
+    <result column="REMARKS" jdbcType="VARCHAR" property="remarks" />
+    
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, ACTIVITY, ORGANIZERS, CONTRACTOR_ID, CONTRACTOR_NAME, CONTRACTOR_PHONE, AREA_ID, 
+    ADDRESS, START_TIME, END_TIME, CREATE_DATE,REVIEW,USER_ID,REMARKS,
+    (select count(sn_number) from act_uav a where a.act_id = b.id) AS uav_count,
+    (select a.area_name from area a where a.area_id = b.AREA_ID) AS area_name
+  </sql>
+  
+  <select id="selectId" resultType="java.lang.String">
+     select sys_guid() from dual
+  </select>
+  
+  <select id="selectById" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List"/>
+    from ACTIVITY b
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectHistoryList" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List"/>
+    from ACTIVITY b
+    where 
+     review=2 and sysdate>END_TIME
+    <if test="userId != null and userId != ''">
+        <![CDATA[ 
+         AND USER_ID = #{userId ,jdbcType=VARCHAR }
+        ]]>
+	</if>
+	order by create_date desc
+  </select>
+  
+   <select id="selectReviewPass" resultMap="BaseResultMap">
+   select 
+    <include refid="Base_Column_List"/>
+    from(
+   select 
+   <include refid="Base_Column_List"/>
+   from ACTIVITY b
+    where review=2
+    minus
+    select 
+    <include refid="Base_Column_List"/>
+    from ACTIVITY b
+    where 
+     review=2 and sysdate>END_TIME) b
+     where 
+    <if test="userId != null and userId != ''">
+        <![CDATA[ 
+         USER_ID = #{userId ,jdbcType=VARCHAR }
+        ]]>
+	</if>
+	order by create_date desc
+  </select>
+  
+  
+   <select id="selectOne" resultMap="BaseResultMap"
+		parameterType="Activity">
+		select
+		<include refid="Base_Column_List" />
+		from ACTIVITY b
+		<where>
+			<if test="id != null and id != ''">
+              <![CDATA[ 
+               AND ID = #{id ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="review != null and review != ''">
+              <![CDATA[ 
+               AND REVIEW = #{review ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="activity != null and activity != ''">
+              <![CDATA[ 
+               AND ACTIVITY = #{activity ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="organizers != null and organizers != ''">
+              <![CDATA[ 
+               AND ORGANIZERS = #{organizers,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="contractorId != null and contractorId != ''">
+              <![CDATA[ 
+               AND CONTRACTOR_ID = #{contractorId ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="contractorName != null and contractorName != ''">
+              <![CDATA[ 
+               AND CONTRACTOR_NAME = #{contractorName ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="contractorPhone != null and contractorPhone != ''">
+              <![CDATA[ 
+               AND CONTRACTOR_PHONE = #{contractorPhone ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="areaId != null and areaId != ''">
+              <![CDATA[ 
+               AND AREA_ID = #{areaId ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+
+			<if test="address != null and address != ''">
+              <![CDATA[ 
+               AND ADDRESS = #{address ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+
+			<if test="startTime != null and startTime != ''">
+              <![CDATA[ 
+               AND START_TIME = #{startTime ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="endTime != null and endTime != ''">
+              <![CDATA[ 
+               AND END_TIME = #{endTime ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="createDate != null and createDate != ''">
+              <![CDATA[ 
+               AND CREATE_DATE = #{createDate ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+		</where>
+		order by CREATE_DATE desc
+  </select>
+  
+  
+  <select id="selectActList" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from ACTIVITY b
+		<where>
+			<if test="id != null and id != ''">
+              <![CDATA[ 
+               AND ID = #{id ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="userId != null and userId != ''">
+              <![CDATA[ 
+               AND USER_ID = #{userId ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="review != null and review != ''">
+              <![CDATA[ 
+               AND REVIEW = #{review ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="activity != null and activity != ''">
+              <![CDATA[ 
+               AND ACTIVITY = #{activity ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="organizers != null and organizers != ''">
+              <![CDATA[ 
+               AND ORGANIZERS = #{organizers,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="contractorId != null and contractorId != ''">
+              <![CDATA[ 
+               AND CONTRACTOR_ID = #{contractorId ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="contractorName != null and contractorName != ''">
+              <![CDATA[ 
+               AND CONTRACTOR_NAME = #{contractorName ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="contractorPhone != null and contractorPhone != ''">
+              <![CDATA[ 
+               AND CONTRACTOR_PHONE = #{contractorPhone ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="areaId != null and areaId != ''">
+			   AND AREA_ID IN
+			    <foreach item="item" collection="areaId" separator="," open="(" close=")" index="">
+			      #{item, jdbcType=VARCHAR}
+			    </foreach>
+		   </if>
+			<if test="address != null and address != ''">
+              <![CDATA[ 
+               AND ADDRESS = #{address ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="startTime != null and startTime != ''">
+              <![CDATA[ 
+               AND START_TIME = #{startTime ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="endTime != null and endTime != ''">
+              <![CDATA[ 
+               AND END_TIME = #{endTime ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="createDate != null and createDate != ''">
+              <![CDATA[ 
+               AND CREATE_DATE = #{createDate ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+		</where>
+		order by REVIEW ,CREATE_DATE desc
+  </select>
+  
+  <delete id="deleteActivity" parameterType="java.lang.String">
+    delete from ACTIVITY
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.google.business.model.Activity">
+    insert into ACTIVITY (ID, ACTIVITY, ORGANIZERS, 
+      CONTRACTOR_ID, CONTRACTOR_NAME, CONTRACTOR_PHONE, 
+      AREA_ID, ADDRESS, START_TIME, 
+      END_TIME, CREATE_DATE,REVIEW,USER_ID,REMARKS)
+    values (#{id,jdbcType=VARCHAR}, #{activity,jdbcType=VARCHAR}, #{organizers,jdbcType=VARCHAR}, 
+      #{contractorId,jdbcType=VARCHAR}, #{contractorName,jdbcType=VARCHAR}, #{contractorPhone,jdbcType=VARCHAR}, 
+      #{areaId,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, 
+      #{endTime,jdbcType=TIMESTAMP}, #{createDate,jdbcType=TIMESTAMP},
+      #{review,jdbcType=VARCHAR},#{userId,jdbcType=VARCHAR}),#{remarks,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertActivity" parameterType="com.google.business.model.Activity">
+    insert into ACTIVITY
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+        ID,
+      <if test="activity != null">
+        ACTIVITY,
+      </if>
+      <if test="organizers != null">
+        ORGANIZERS,
+      </if>
+      <if test="contractorId != null">
+        CONTRACTOR_ID,
+      </if>
+      <if test="contractorName != null">
+        CONTRACTOR_NAME,
+      </if>
+      <if test="contractorPhone != null">
+        CONTRACTOR_PHONE,
+      </if>
+      <if test="areaId != null">
+        AREA_ID,
+      </if>
+      <if test="address != null">
+        ADDRESS,
+      </if>
+      <if test="startTime != null">
+        START_TIME,
+      </if>
+      <if test="endTime != null">
+        END_TIME,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+       <if test="userId != null">
+        USER_ID,
+      </if>
+      <if test="review != null">
+        REVIEW,
+      </if>
+      <if test="review != null">
+        REMARKS
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+       #{id,jdbcType=VARCHAR},
+      <if test="activity != null">
+        #{activity,jdbcType=VARCHAR},
+      </if>
+      <if test="organizers != null">
+        #{organizers,jdbcType=VARCHAR},
+      </if>
+      <if test="contractorId != null">
+        #{contractorId,jdbcType=VARCHAR},
+      </if>
+      <if test="contractorName != null">
+        #{contractorName,jdbcType=VARCHAR},
+      </if>
+      <if test="contractorPhone != null">
+        #{contractorPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="areaId != null">
+        #{areaId,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null">
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+       <if test="userId != null">
+       #{userId,jdbcType=TIMESTAMP},
+      </if>
+      <if test="review != null">
+        #{review,jdbcType=VARCHAR},
+      </if>
+      <if test="remarks != null">
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateActivity" parameterType="com.google.business.model.Activity">
+    update ACTIVITY
+    <set>
+     <!--  <if test="id != null">
+        ID = #{id,jdbcType=VARCHAR},
+      </if> -->
+      <if test="activity != null">
+        ACTIVITY = #{activity,jdbcType=VARCHAR},
+      </if>
+      <if test="organizers != null">
+        ORGANIZERS = #{organizers,jdbcType=VARCHAR},
+      </if>
+      <if test="contractorId != null">
+        CONTRACTOR_ID = #{contractorId,jdbcType=VARCHAR},
+      </if>
+      <if test="contractorName != null">
+        CONTRACTOR_NAME = #{contractorName,jdbcType=VARCHAR},
+      </if>
+      <if test="contractorPhone != null">
+        CONTRACTOR_PHONE = #{contractorPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="areaId != null">
+        AREA_ID = #{areaId,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        ADDRESS = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null">
+        START_TIME = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        END_TIME = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="review != null">
+        REVIEW = #{review,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        USER_ID = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="remarks != null">
+        REMARKS = #{remarks,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.google.business.model.Activity">
+    update ACTIVITY
+    set ACTIVITY = #{activity,jdbcType=VARCHAR},
+      ORGANIZERS = #{organizers,jdbcType=VARCHAR},
+      CONTRACTOR_ID = #{contractorId,jdbcType=VARCHAR},
+      CONTRACTOR_NAME = #{contractorName,jdbcType=VARCHAR},
+      CONTRACTOR_PHONE = #{contractorPhone,jdbcType=VARCHAR},
+      AREA_ID = #{areaId,jdbcType=VARCHAR},
+      ADDRESS = #{address,jdbcType=VARCHAR},
+      START_TIME = #{startTime,jdbcType=TIMESTAMP},
+      END_TIME = #{endTime,jdbcType=TIMESTAMP},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      REVIEW = #{review,jdbcType=VARCHAR},
+      USER_ID = #{userId,jdbcType=VARCHAR},
+      REMARKS = #{remarks,jdbcType=VARCHAR},
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

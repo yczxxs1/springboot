@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.google.business.dao.FenceCircleDAO">
+  <resultMap id="BaseResultMap1" type="FenceCircle">
+    <id column="FID" jdbcType="VARCHAR" property="fid" />
+    <result column="LONGITUDE" jdbcType="DOUBLE" property="longitude" />
+    <result column="LATITUDE" jdbcType="DOUBLE" property="latitude" />
+    <result column="RADIUS" jdbcType="INTEGER" property="radius" />
+  </resultMap>
+  
+  <resultMap id="BaseResultMap2" type="FenceInfo">
+    <id column="FID" jdbcType="VARCHAR" property="fid" />
+    <result column="FENCEID" jdbcType="INTEGER" property="fenceid" />
+    <result column="MONITED_PERSON" jdbcType="VARCHAR" property="monitedPerson" />
+    <result column="FENCE_NAME" jdbcType="VARCHAR" property="fenceName" />
+    <result column="FENCE_START" jdbcType="VARCHAR" property="fenceStart" />
+    <result column="FENCE_END" jdbcType="VARCHAR" property="fenceEnd" />
+    <result column="FENCE_HEIGHT" jdbcType="VARCHAR" property="fenceHeight" />
+    <result column="FENCE_TYPE" jdbcType="VARCHAR" property="fenceType" />
+    <result column="DISTANCE" jdbcType="VARCHAR" property="distance"/>
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    FID, LONGITUDE, LATITUDE, RADIUS
+  </sql>
+  
+  <select id="selectFenceCircle" parameterType="FenceCircle" resultMap="BaseResultMap2">
+		  <![CDATA[  
+		 select b.*,a.distance
+		  from (select fid,radius,6366000*acos(
+			cos(#{latitude,jdbcType=DOUBLE}/57.29400418246231)
+			*cos(#{longitude,jdbcType=DOUBLE}/57.29400418246231)
+			*cos(latitude/57.29400418246231) 
+			*cos(longitude/57.29400418246231)+
+			
+			cos(#{latitude,jdbcType=DOUBLE}/57.29400418246231)
+			*sin(#{longitude,jdbcType=DOUBLE}/57.29400418246231)
+			*cos(latitude/57.29400418246231) 
+			*sin(longitude/57.29400418246231)+
+			
+			sin(#{latitude,jdbcType=DOUBLE}/57.29400418246231)*sin(latitude/57.29400418246231)) distance from fencecircle) a
+			right join fenceinfo b on a.fid=b.fid
+		where 
+			radius>=distance-1000 order by distance
+		 ]]>
+  </select>
+  
+  <delete id="deleteFenceCircle" parameterType="java.lang.String">
+    delete from FENCECIRCLE
+    where FID = #{fid,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insertFenceCircle" parameterType="FenceCircle">
+    insert into FENCECIRCLE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="fid != null">
+        FID,
+      </if>
+      <if test="longitude != null">
+        LONGITUDE,
+      </if>
+      <if test="latitude != null">
+        LATITUDE,
+      </if>
+      <if test="radius != null">
+        RADIUS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="fid != null">
+        #{fid,jdbcType=VARCHAR},
+      </if>
+      <if test="longitude != null">
+        #{longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="latitude != null">
+        #{latitude,jdbcType=DOUBLE},
+      </if>
+      <if test="radius != null">
+        #{radius,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateFenceCircle" parameterType="FenceCircle">
+    update FENCECIRCLE
+    <set>
+      <if test="longitude != null">
+        LONGITUDE = #{longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="latitude != null">
+        LATITUDE = #{latitude,jdbcType=DOUBLE},
+      </if>
+      <if test="radius != null">
+        RADIUS = #{radius,jdbcType=INTEGER},
+      </if>
+    </set>
+    where FID = #{fid,jdbcType=VARCHAR}
+  </update>
+  
+  
+  
+</mapper>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.google.business.dao.RotationDAO">
+  <resultMap id="BaseResultMap" type="RotationEntity">
+  	<id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="TITLE" jdbcType="VARCHAR" property="title" />
+    <result column="PHOTO_URL" jdbcType="VARCHAR" property="photoUrl" />
+    <result column="URL" jdbcType="VARCHAR" property="url" />
+    <result column="TYPE" jdbcType="VARCHAR" property="type" />
+  </resultMap>
+  
+  <select id="selectOne" parameterType="RotationEntity" resultMap="BaseResultMap">
+    SELECT 
+        ID, TITLE,PHOTO_URL,URL,TYPE
+    FROM ROTATION
+     <where>
+            <if test="type != null and type != ''">
+                <![CDATA[ 
+                  AND TYPE = #{type,jdbcType=VARCHAR}
+                ]]>
+            </if>       
+    </where>
+  </select>
+  
+
+ 
+
+  
+  
+
+ 
+</mapper>

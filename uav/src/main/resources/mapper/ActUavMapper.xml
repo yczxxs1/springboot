@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.google.business.dao.ActUavDAO">
+  <resultMap id="BaseResultMap" type="ActUav">
+
+    <result column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="ACT_ID" jdbcType="VARCHAR" property="actId" />
+    <result column="SN_NUMBER" jdbcType="VARCHAR" property="snNumber" />
+    <result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+    <result column="USER_NUMBER" jdbcType="VARCHAR" property="userNumber" />
+    <result column="USER_PHONE" jdbcType="VARCHAR" property="userPhone" />
+    <result column="CARD" jdbcType="VARCHAR" property="card" />
+    <result column="REVIEW" jdbcType="VARCHAR" property="review" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    ID, ACT_ID, SN_NUMBER, USER_NAME, USER_NUMBER, USER_PHONE, CARD,REVIEW
+  </sql>
+  
+
+  <select id="selectActUavByActId" resultMap="BaseResultMap"
+		parameterType="ActUav">
+		select
+		<include refid="Base_Column_List" />
+		from ACT_UAV
+	   where ACT_ID = #{actId ,jdbcType=VARCHAR }
+  </select>
+  
+
+  <select id="selectOne" resultMap="BaseResultMap"
+		parameterType="ActUav">
+		select
+		<include refid="Base_Column_List" />
+		from ACT_UAV
+		<where>
+			<if test="id != null and id != ''">
+              <![CDATA[ 
+               AND id = #{id ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="snNumber != null and snNumber != ''">
+              <![CDATA[ 
+               AND sn_number = #{snNumber ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="actId != null and actId != ''">
+              <![CDATA[ 
+               AND  ACT_ID= #{actId ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			</where>
+  </select>
+  
+
+  <select id="selectActUavList" resultMap="BaseResultMap"
+		parameterType="ActUav">
+		select
+		<include refid="Base_Column_List" />
+		from ACT_UAV
+		<where>
+			<if test="id != null and id != ''">
+              <![CDATA[ 
+               AND ID = #{id ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="actId != null and actId != ''">
+              <![CDATA[ 
+               AND ACT_ID = #{actId ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="snNumber != null and snNumber != ''">
+              <![CDATA[ 
+               AND SN_NUMBER = #{snNumber ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="userName != null and userName != ''">
+              <![CDATA[ 
+               AND USER_NAME = #{userName,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="userNumber != null and userNumber != ''">
+              <![CDATA[ 
+               AND USER_NUMBER = #{userNumber,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="userPhone != null and userPhone != ''">
+              <![CDATA[ 
+               AND USER_PHONE = #{userPhone ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="card != null and card != ''">
+              <![CDATA[ 
+               AND CARD = #{card ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="review != null and review != ''">
+              <![CDATA[ 
+               AND REVIEW = #{review ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+		</where>
+		order by review 
+    </select>
+  
+       <!-- 查询当前活动添加无人机驾驶员信息 -->
+    <select id="selectRP" resultMap="BaseResultMap"
+		parameterType="ActUav">
+		select
+		distinct( USER_NUMBER),USER_NAME, USER_PHONE
+		from ACT_UAV
+		<where>
+			<if test="actId != null and actId != ''">
+              <![CDATA[ 
+               AND ACT_ID = #{actId ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+		</where>
+    </select>
+    
+     <!-- 查询当前活动无人机审核通过的条数 -->
+    <select id="selectActUavReviewCount" resultType="java.lang.Integer"
+		parameterType="String">
+		select count(review)
+		from ACT_UAV
+		where  REVIEW > '1' AND  ACT_ID = #{actId ,jdbcType=VARCHAR }
+  </select>
+  
+   <!-- 查询当前活动无人机未审核条数 -->
+    <select id="selectActUavReviewCount0" resultType="java.lang.Integer"
+		parameterType="String">
+		select count(review)
+		from ACT_UAV
+		where  REVIEW = '0' AND  ACT_ID = #{actId ,jdbcType=VARCHAR }
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from ACT_UAV
+		where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+	
+  <insert id="insert" parameterType="ActUav">
+    insert into ACT_UAV (ID, ACT_ID, SN_NUMBER, 
+      USER_NAME, USER_NUMBER, USER_PHONE, CARD, REVIEW
+      )
+    values (#{id,jdbcType=VARCHAR}, #{actId,jdbcType=VARCHAR}, #{snNumber,jdbcType=VARCHAR}, 
+      #{userName,jdbcType=VARCHAR},#{userNumber,jdbcType=VARCHAR}, #{userPhone,jdbcType=VARCHAR}, 
+      #{card,jdbcType=VARCHAR},#{review,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="ActUav" keyProperty="id" useGeneratedKeys="true">
+		<selectKey keyProperty="id" order="BEFORE" resultType="java.lang.String">
+			select sys_guid() from dual
+		</selectKey> 
+    insert into ACT_UAV
+    <trim prefix="(" suffix=")" suffixOverrides=",">   
+        ID,
+      <if test="actId != null">
+        ACT_ID,
+      </if>
+      <if test="snNumber != null">
+        SN_NUMBER,
+      </if>
+      <if test="userName != null">
+        USER_NAME,
+      </if>
+       <if test="userNumber != null">
+        USER_NUMBER,
+      </if>
+      <if test="userPhone != null">
+        USER_PHONE,
+      </if>
+      <if test="card != null">
+        CARD,
+      </if>
+       <if test="review != null">
+        REVIEW
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+         #{id,jdbcType=VARCHAR},
+      <if test="actId != null">
+        #{actId,jdbcType=VARCHAR},
+      </if>
+      <if test="snNumber != null">
+        #{snNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userNumber != null">
+        #{userNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="userPhone != null">
+        #{userPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="card != null">
+        #{card,jdbcType=VARCHAR},
+      </if>
+      <if test="review != null">
+        #{review,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateReview" parameterType="ActUav">
+		update ACT_UAV
+		<set>
+			<if test="review != null">
+				REVIEW = #{review,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

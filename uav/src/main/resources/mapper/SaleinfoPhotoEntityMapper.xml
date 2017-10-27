@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.google.business.dao.SaleinfoPhotoEntityMapper">
+  <resultMap id="BaseResultMap" type="com.google.business.model.SaleinfoPhotoEntity">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="SALEINFO_ID" jdbcType="VARCHAR" property="saleinfoId" />
+    <result column="SALEINFO_PHOTO" jdbcType="VARCHAR" property="saleinfoPhoto" />
+    <result column="CREAT_DATE" jdbcType="TIMESTAMP" property="creatDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, SALEINFO_ID, SALEINFO_PHOTO, CREAT_DATE
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from SALEINFO_PHOTO
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from SALEINFO_PHOTO
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.google.business.model.SaleinfoPhotoEntity">
+    insert into SALEINFO_PHOTO (ID, SALEINFO_ID, SALEINFO_PHOTO, 
+      CREAT_DATE)
+    values (#{id,jdbcType=VARCHAR}, #{saleinfoId,jdbcType=VARCHAR}, #{saleinfoPhoto,jdbcType=VARCHAR}, 
+      #{creatDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.google.business.model.SaleinfoPhotoEntity">
+    insert into SALEINFO_PHOTO
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="saleinfoId != null">
+        SALEINFO_ID,
+      </if>
+      <if test="saleinfoPhoto != null">
+        SALEINFO_PHOTO,
+      </if>
+      <if test="creatDate != null">
+        CREAT_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="saleinfoId != null">
+        #{saleinfoId,jdbcType=VARCHAR},
+      </if>
+      <if test="saleinfoPhoto != null">
+        #{saleinfoPhoto,jdbcType=VARCHAR},
+      </if>
+      <if test="creatDate != null">
+        #{creatDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.google.business.model.SaleinfoPhotoEntity">
+    update SALEINFO_PHOTO
+    <set>
+      <if test="saleinfoId != null">
+        SALEINFO_ID = #{saleinfoId,jdbcType=VARCHAR},
+      </if>
+      <if test="saleinfoPhoto != null">
+        SALEINFO_PHOTO = #{saleinfoPhoto,jdbcType=VARCHAR},
+      </if>
+      <if test="creatDate != null">
+        CREAT_DATE = #{creatDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.google.business.model.SaleinfoPhotoEntity">
+    update SALEINFO_PHOTO
+    set SALEINFO_ID = #{saleinfoId,jdbcType=VARCHAR},
+      SALEINFO_PHOTO = #{saleinfoPhoto,jdbcType=VARCHAR},
+      CREAT_DATE = #{creatDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

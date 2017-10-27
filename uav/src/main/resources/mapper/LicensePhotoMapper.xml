@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.google.business.dao.LicensePhotoDAO" >
+  <resultMap id="BaseResultMap" type="LicensePhotoEntity" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="LICENSE_ID" property="licenseId" jdbcType="VARCHAR" />
+    <result column="PHOTO_URL" property="photoUrl" jdbcType="VARCHAR" />
+    <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
+    <result column="CREATE_DATE" property="createDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, LICENSE_ID, PHOTO_URL, USER_ID, CREATE_DATE
+  </sql>
+  
+  <select id="selectLicensePhotoList" resultMap="BaseResultMap" parameterType="LicensePhotoEntity" >
+    select 
+    <include refid="Base_Column_List" />
+    from LICENSE_PHOTO
+    <where>
+          <if test="id != null and id != ''">
+              <![CDATA[ 
+               AND id = #{id ,jdbcType=VARCHAR }
+              ]]>
+          </if>
+          <if test="licenseId != null and licenseId != ''">
+              <![CDATA[ 
+               AND license_id = #{licenseId ,jdbcType=VARCHAR }
+              ]]>
+          </if>
+      </where>
+      order by CREATE_DATE desc
+  </select>
+  
+  <select id="selectLicensePhotoList_count" resultType="java.lang.Integer" parameterType="LicensePhotoEntity" >
+    select 
+     count(0)
+    from LICENSE_PHOTO
+  </select>
+  
+  <select id="selectLicensePhotoOne" resultMap="BaseResultMap" parameterType="LicensePhotoEntity" >
+    select 
+    <include refid="Base_Column_List" />
+    from LICENSE_PHOTO
+    <where>
+          <if test="id != null and id != ''">
+              <![CDATA[ 
+               AND id = #{id ,jdbcType=VARCHAR }
+              ]]>
+          </if>
+          <if test="licenseId != null and licenseId != ''">
+              <![CDATA[ 
+               AND license_id = #{licenseId ,jdbcType=VARCHAR }
+              ]]>
+          </if>
+      </where>
+  </select>
+  
+  <select id="selectLicensePhotoFirst" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from (select p.*
+                  from license_photo p
+                 where p.license_id = #{licenseId ,jdbcType=VARCHAR }
+                 order by p.create_date desc)
+     where rownum = 1
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from LICENSE_PHOTO
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from LICENSE_PHOTO
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="LicensePhotoEntity" >
+    insert into LICENSE_PHOTO (ID, LICENSE_ID, PHOTO_URL, 
+      USER_ID, CREATE_DATE)
+    values (#{id,jdbcType=VARCHAR}, #{licenseId,jdbcType=VARCHAR}, #{photoUrl,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="LicensePhotoEntity" >
+    insert into LICENSE_PHOTO
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+     
+        ID,
+     
+      <if test="licenseId != null" >
+        LICENSE_ID,
+      </if>
+      <if test="photoUrl != null" >
+        PHOTO_URL,
+      </if>
+      <if test="userId != null" >
+        USER_ID,
+      </if>
+      <if test="createDate != null" >
+        CREATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      
+       sys_guid(),
+      
+      <if test="licenseId != null" >
+        #{licenseId,jdbcType=VARCHAR},
+      </if>
+      <if test="photoUrl != null" >
+        #{photoUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="LicensePhotoEntity" >
+    update LICENSE_PHOTO
+    <set >
+      <if test="licenseId != null" >
+        LICENSE_ID = #{licenseId,jdbcType=VARCHAR},
+      </if>
+      <if test="photoUrl != null" >
+        PHOTO_URL = #{photoUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        USER_ID = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="LicensePhotoEntity" >
+    update LICENSE_PHOTO
+    set LICENSE_ID = #{licenseId,jdbcType=VARCHAR},
+      PHOTO_URL = #{photoUrl,jdbcType=VARCHAR},
+      USER_ID = #{userId,jdbcType=VARCHAR},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

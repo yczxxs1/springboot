@@ -1,0 +1,765 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.google.business.dao.UavDAO">
+	<resultMap id="BaseResultMap" type="UavEntity">
+		<id column="ID" property="id" jdbcType="VARCHAR" />
+		<result column="CODE" property="code" jdbcType="VARCHAR" />
+		<result column="SN_NUMBER" property="snNumber" jdbcType="VARCHAR" />
+		<result column="FACTORY_ID" property="factoryId" jdbcType="VARCHAR" />
+		<result column="MODEL_ID" property="modelId" jdbcType="VARCHAR" />
+		<result column="PRODUCT_NAME" property="productName" jdbcType="VARCHAR" />
+		<result column="PRODUCT_TYPE" property="productType" jdbcType="VARCHAR" />
+		<result column="EMPTY_WEIGHT" property="emptyWeight" jdbcType="VARCHAR" />
+		<result column="MAX_TAKEOFF_WEIGHT" property="maxTakeoffWeight"
+			jdbcType="VARCHAR" />
+		<result column="PURPOSE" property="purpose" jdbcType="VARCHAR" />
+		<result column="REG_DATE" property="regDate" jdbcType="TIMESTAMP" />
+		<result column="VALID_DATE" property="validDate" jdbcType="TIMESTAMP" />
+		<result column="BELONG_TO" property="belongTo" jdbcType="VARCHAR" />
+		<result column="BELONG_ID" property="belongId" jdbcType="VARCHAR" />
+		<result column="STATUS" property="status" jdbcType="VARCHAR" />
+		<result column="PHOTOURL" property="photoUrl" jdbcType="VARCHAR" />
+
+		<result column="FACTORYNAME" property="factoryName" jdbcType="VARCHAR" />
+		<result column="MODELNAME" property="modelName" jdbcType="VARCHAR" />
+		<!-- <result column="BELONGNAME" property="belongName" jdbcType="VARCHAR" 
+			/> <result column="USERMOBILE" property="userMobile" jdbcType="VARCHAR" /> -->
+		<result column="PURPOSENAME" property="purposeName" jdbcType="VARCHAR" />
+		<result column="product_type_name" property="productTypeName"
+			jdbcType="VARCHAR" />
+		<result column="review_reason" property="reviewReason"
+			jdbcType="VARCHAR" />
+		<result column="review_remark" property="reviewRemark"
+			jdbcType="VARCHAR" />
+		<result column="BELONG_TYPE" property="belongType" jdbcType="VARCHAR" />
+		<result column="MADEBYSELF" property="madeByself" jdbcType="VARCHAR" />
+		<result column="BELONGTYPENAME" property="belongTypeName" jdbcType="VARCHAR" />
+		<result column="AREA_NAME" property="areaName" jdbcType="VARCHAR" />	
+	</resultMap>
+	
+	
+	
+	<resultMap id="BaseResultMap1" type="UavEntity">
+		<id column="ID" property="id" jdbcType="VARCHAR" />
+		<result column="CODE" property="code" jdbcType="VARCHAR" />
+		<result column="SN_NUMBER" property="snNumber" jdbcType="VARCHAR" />
+		<result column="FACTORY_ID" property="factoryId" jdbcType="VARCHAR" />
+		<result column="MODEL_ID" property="modelId" jdbcType="VARCHAR" />
+		<result column="PRODUCT_NAME" property="productName" jdbcType="VARCHAR" />
+		<result column="PRODUCT_TYPE" property="productType" jdbcType="VARCHAR" />
+		<result column="EMPTY_WEIGHT" property="emptyWeight" jdbcType="VARCHAR" />
+		<result column="MAX_TAKEOFF_WEIGHT" property="maxTakeoffWeight"
+			jdbcType="VARCHAR" />
+		<result column="PURPOSE" property="purpose" jdbcType="VARCHAR" />
+		<result column="REG_DATE" property="regDate" jdbcType="TIMESTAMP" />
+		<result column="VALID_DATE" property="validDate" jdbcType="TIMESTAMP" />
+		<result column="BELONG_TO" property="belongTo" jdbcType="VARCHAR" />
+		<result column="BELONG_ID" property="belongId" jdbcType="VARCHAR" />
+		<result column="STATUS" property="status" jdbcType="VARCHAR" />
+		<result column="PHOTOURL" property="photoUrl" jdbcType="VARCHAR" />
+
+		<result column="FACTORYNAME" property="factoryName" jdbcType="VARCHAR" />
+		<result column="MODELNAME" property="modelName" jdbcType="VARCHAR" />
+		<!-- <result column="BELONGNAME" property="belongName" jdbcType="VARCHAR" 
+			/> <result column="USERMOBILE" property="userMobile" jdbcType="VARCHAR" /> -->
+		<result column="PURPOSENAME" property="purposeName" jdbcType="VARCHAR" />
+		<result column="product_type_name" property="productTypeName"
+			jdbcType="VARCHAR" />
+		<result column="review_reason" property="reviewReason"
+			jdbcType="VARCHAR" />
+		<result column="review_remark" property="reviewRemark"
+			jdbcType="VARCHAR" />
+		<result column="BELONG_TYPE" property="belongType" jdbcType="VARCHAR" />
+		<result column="MADEBYSELF" property="madeByself" jdbcType="VARCHAR" />
+		<association column="BELONG_ID" property="user"
+			select="com.google.business.dao.UserDAO.selectByPrimaryKey" />
+		<association column="BELONG_ID" property="company"
+			select="com.google.business.dao.CompanysDAO.selectByPrimaryKey" />
+		<association column="BELONG_ID" property="police"
+			select="com.google.business.dao.PoliceDAO.selectByPrimaryKey" />
+		<association column="ID" property="uavPhotoList"
+			select="com.google.business.dao.UavPhotoDAO.selectUavPhotoList2" />
+		
+			
+			
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		ID, CODE, SN_NUMBER, FACTORY_ID, MODEL_ID, PRODUCT_NAME, PRODUCT_TYPE,
+		EMPTY_WEIGHT,
+		MAX_TAKEOFF_WEIGHT, PURPOSE, REG_DATE, VALID_DATE, BELONG_TO, BELONG_ID, STATUS,review,BELONG_TYPE,MADEBYSELF,
+		(select name from factory where id = factory_id) AS FACTORYNAME,
+		(select model_name from uav_model where id = model_id) AS MODELNAME,
+		(select CATEGORY from AIRCRAFT t where id =BELONG_TYPE)  AS BELONGTYPENAME,
+		<!-- (select name from users where id = belong_id) AS BELONGNAME, (select 
+			user_mobile from users where id = belong_id) AS USERMOBILE, -->
+		(select label from dict where id=purpose ) AS
+		PURPOSENAME,review_reason,review_remark
+	</sql>
+	
+	<sql id="Base_Column_List1">
+		A.ID, CODE, SN_NUMBER, FACTORY_ID, MODEL_ID, PRODUCT_NAME, PRODUCT_TYPE,
+		EMPTY_WEIGHT,
+		MAX_TAKEOFF_WEIGHT, PURPOSE, REG_DATE, VALID_DATE, BELONG_TO, BELONG_ID, STATUS,review,
+		(select name from factory where id = factory_id) AS FACTORYNAME,
+		(select model_name from uav_model where id = model_id) AS MODELNAME,
+		<!-- (select name from users where id = belong_id) AS BELONGNAME, (select 
+			user_mobile from users where id = belong_id) AS USERMOBILE, -->
+		(select label from dict where id=purpose ) AS
+		PURPOSENAME,review_reason,review_remark,
+		(SELECT AREA_NAME FROM AREA WHERE AREA_ID=b.AREA_ID) AS AREA_NAME 
+	</sql>
+
+
+   <select id="selectUavListByArea" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List1" />
+		from UAV A left join USERS B on A.BELONG_ID = B.ID
+		<where>
+			<if test="uav.factoryId != null and uav.factoryId != ''">
+              <![CDATA[ 
+               AND FACTORY_ID = #{uav.factoryId ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="uav.belongTo != null and uav.belongTo != ''">
+              <![CDATA[ 
+               AND BELONG_TO = #{uav.belongTo ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="areaId != null and areaId != ''">
+	   			AND AREA_ID IN
+			    <foreach item="item" collection="areaId" separator="," open="(" close=")" index="">
+			      #{item, jdbcType=VARCHAR}
+			    </foreach>
+			</if>
+			
+			<if test="uav.snNumber != null and uav.snNumber != ''">
+              <![CDATA[ 
+               AND SN_NUMBER = #{uav.snNumber ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="uav.purpose != null and uav.purpose != ''">
+              <![CDATA[ 
+               AND PURPOSE = #{uav.purpose ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="uav.belongTo != null and uav.belongTo != ''">
+              <![CDATA[ 
+               AND belong_to = #{uav.belongTo ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<!--条件 -->
+			<if test="uav.belongTo2 != null and uav.belongTo2 != ''">
+              <![CDATA[ 
+               AND belong_to != #{uav.belongTo2 ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+
+			<if test="uav.belongId != null and uav.belongId != ''">
+              <![CDATA[ 
+               AND belong_id = #{uav.belongId ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+
+			<if test="uav.status != null and uav.status != ''">
+              <![CDATA[ 
+               AND status = #{uav.status ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<!--条件 -->
+			<if test="uav.status2 != null and uav.status2 != ''">
+              <![CDATA[ 
+               AND status != #{uav.status2 ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="uav.modelId != null and uav.modelId != ''">
+              <![CDATA[ 
+               AND MODEL_ID = #{uav.modelId ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="uav.review != null and uav.review != ''">
+              <![CDATA[ 
+               AND review = #{uav.review ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="uav.review2 != null and uav.review2 != ''">
+              <![CDATA[ 
+               AND review != #{uav.review2 ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+		</where>
+		order by review asc , id desc
+	</select>
+
+	<select id="selectUavList" resultMap="BaseResultMap"
+		parameterType="UavEntity">
+		select
+		<include refid="Base_Column_List1" />
+		from UAV A left join USERS B on A.BELONG_ID = B.ID
+		<where>
+			<if test="factoryId != null and factoryId != ''">
+              <![CDATA[ 
+               AND FACTORY_ID = #{factoryId ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="belongTo != null and belongTo != ''">
+              <![CDATA[ 
+               AND BELONG_TO = #{belongTo ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="areaId != null and areaId != ''">
+              <![CDATA[ 
+               AND AREA_ID = #{areaId ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="snNumber != null and snNumber != ''">
+              <![CDATA[ 
+               AND SN_NUMBER = #{snNumber ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="purpose != null and purpose != ''">
+              <![CDATA[ 
+               AND PURPOSE = #{purpose ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="belongTo != null and belongTo != ''">
+              <![CDATA[ 
+               AND belong_to = #{belongTo ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<!--条件 -->
+			<if test="belongTo2 != null and belongTo2 != ''">
+              <![CDATA[ 
+               AND belong_to != #{belongTo2 ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+
+			<if test="belongId != null and belongId != ''">
+              <![CDATA[ 
+               AND belong_id = #{belongId ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+
+			<if test="status != null and status != ''">
+              <![CDATA[ 
+               AND status = #{status ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<!--条件 -->
+			<if test="status2 != null and status2 != ''">
+              <![CDATA[ 
+               AND status != #{status2 ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="modelId != null and modelId != ''">
+              <![CDATA[ 
+               AND MODEL_ID = #{modelId ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="review != null and review != ''">
+              <![CDATA[ 
+               AND review = #{review ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="review2 != null and review2 != ''">
+              <![CDATA[ 
+               AND review != #{review2 ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+		</where>
+		order by review asc , id desc
+	</select>
+
+	<select id="selectUavList_count" resultType="java.lang.Integer"
+		parameterType="UavEntity">
+		select
+		count(0)
+		from UAV
+		<where>
+			<if test="factoryId != null and factoryId != ''">
+              <![CDATA[ 
+               AND FACTORY_ID = #{factoryId ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="snNumber != null and snNumber != ''">
+              <![CDATA[ 
+               AND SN_NUMBER = #{snNumber ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="purpose != null and purpose != ''">
+              <![CDATA[ 
+               AND PURPOSE = #{purpose ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="belongTo != null and belongTo != ''">
+              <![CDATA[ 
+               AND belong_to = #{belongTo ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<!--条件 -->
+			<if test="belongTo2 != null and belongTo2 != ''">
+              <![CDATA[ 
+               AND belong_to != #{belongTo2 ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+
+			<if test="belongId != null and belongId != ''">
+              <![CDATA[ 
+               AND belong_id = #{belongId ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+
+			<if test="status != null and status != ''">
+              <![CDATA[ 
+               AND status = #{status ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<!--条件 -->
+			<if test="status2 != null and status2 != ''">
+              <![CDATA[ 
+               AND status != #{status2 ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="modelId != null and modelId != ''">
+              <![CDATA[ 
+               AND MODEL_ID = #{modelId ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="review2 != null and review2 != ''">
+              <![CDATA[ 
+               AND review != #{review2 ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="review != null and review != ''">
+              <![CDATA[ 
+               AND review = #{review ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+		</where>
+		order by review
+	</select>
+
+	<select id="selectUavOne" resultMap="BaseResultMap" parameterType="UavEntity">
+		select
+		<include refid="Base_Column_List" />
+		from UAV
+		<where>
+			<if test="id != null and id != ''">
+              <![CDATA[ 
+               AND id = #{id ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="belongTo != null and belongTo != ''">
+              <![CDATA[ 
+               AND belong_to = #{belongTo ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="snNumber != null and belongTo != ''">
+              <![CDATA[ 
+               AND sn_number = #{snNumber ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="belongId != null and belongId != ''">
+              <![CDATA[ 
+               AND belong_id = #{belongId ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="status != null and status != ''">
+              <![CDATA[ 
+               AND status = #{status ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="status2 != null and status2 != ''">
+              <![CDATA[ 
+               AND status != #{status2 ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="review2 != null and review2 != ''">
+              <![CDATA[ 
+               AND review != #{review2 ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+		</where>
+		order by reg_date desc
+	</select>
+	
+	<select id="selectUavBySnNumber" resultMap="BaseResultMap" >
+		select * from uav where sn_number = #{snNumber ,jdbcType=VARCHAR }
+	</select>
+	
+	<select id="selectNameByUavStatus" resultMap="BaseResultMap" parameterType="UavEntity">
+		select
+		<include refid="Base_Column_List" />
+		from UAV a
+		where SN_NUMBER = #{snNumber,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectUavOneDetail" resultMap="BaseResultMap1" parameterType="UavEntity">
+		select
+		<include refid="Base_Column_List" />
+		from UAV
+		<where>
+			<if test="id != null and id != ''">
+              <![CDATA[ 
+               AND id = #{id ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="belongTo != null and belongTo != ''">
+              <![CDATA[ 
+               AND belong_to = #{belongTo ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="snNumber != null and belongTo != ''">
+              <![CDATA[ 
+               AND sn_number = #{snNumber ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="belongId != null and belongId != ''">
+              <![CDATA[ 
+               AND belong_id = #{belongId ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="status != null and status != ''">
+              <![CDATA[ 
+               AND status = #{status ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="status2 != null and status2 != ''">
+              <![CDATA[ 
+               AND status != #{status2 ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="review2 != null and review2 != ''">
+              <![CDATA[ 
+               AND review != #{review2 ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+		</where>
+		order by reg_date desc
+	</select>
+
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from UAV
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectExceptWuXi" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select 		
+		<include refid="Base_Column_List" />
+         from(
+		select A.*  from USERS B right join UAV A on A.BELONG_ID = B.ID
+		MINUS
+		select A.*  from USERS B right join UAV A on A.BELONG_ID = B.ID
+        where area_id in
+        (select area_id from area
+         where area_father_id = (select city_id from city where trim(city_name) = '无锡市'))) F
+         <where>
+			<if test="factoryId != null and factoryId != ''">
+              <![CDATA[ 
+               AND f.FACTORY_ID = #{factoryId ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="belongTo != null and belongTo != ''">
+              <![CDATA[ 
+               AND f.BELONG_TO = #{belongTo ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="areaId != null and areaId != ''">
+              <![CDATA[ 
+               AND f.AREA_ID = #{areaId ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="snNumber != null and snNumber != ''">
+              <![CDATA[ 
+               AND f.SN_NUMBER = #{snNumber ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="purpose != null and purpose != ''">
+              <![CDATA[ 
+               AND f.PURPOSE = #{purpose ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="belongTo != null and belongTo != ''">
+              <![CDATA[ 
+               AND f.belong_to = #{belongTo ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<!--条件 -->
+			<if test="belongTo2 != null and belongTo2 != ''">
+              <![CDATA[ 
+               AND f.belong_to != #{belongTo2 ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+
+			<if test="belongId != null and belongId != ''">
+              <![CDATA[ 
+               AND f.belong_id = #{belongId ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+
+			<if test="status != null and status != ''">
+              <![CDATA[ 
+               AND f.status = #{status ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<!--条件 -->
+			<if test="status2 != null and status2 != ''">
+              <![CDATA[ 
+               AND f.status != #{status2 ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="modelId != null and modelId != ''">
+              <![CDATA[ 
+               AND F.MODEL_ID = #{modelId ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="review != null and review != ''">
+              <![CDATA[ 
+               AND F.review = #{review ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+			<if test="review2 != null and review2 != ''">
+              <![CDATA[ 
+               AND F.review != #{review2 ,jdbcType=VARCHAR }
+              ]]>
+			</if>
+		</where>
+		order by review asc ,id desc
+	</select>
+	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from UAV
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+	<delete id="deleteByBelongId" parameterType="java.lang.String">
+		delete from UAV
+		where BELONG_ID = #{belongId,jdbcType=VARCHAR}
+	</delete>
+	<delete id="deleteBySnNumber" parameterType="java.lang.String">
+		delete from UAV
+		where sn_number = #{snNumber,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="UavEntity">
+		insert into UAV (ID, CODE, SN_NUMBER,
+		FACTORY_ID, MODEL_ID, PRODUCT_NAME,
+		PRODUCT_TYPE, EMPTY_WEIGHT, MAX_TAKEOFF_WEIGHT,
+		PURPOSE, REG_DATE, VALID_DATE,
+		BELONG_TO, BELONG_ID, STATUS
+		)
+		values (#{id,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR},
+		#{snNumber,jdbcType=VARCHAR},
+		#{factoryId,jdbcType=VARCHAR}, #{modelId,jdbcType=VARCHAR}, #{productName,jdbcType=VARCHAR},
+		#{productType,jdbcType=VARCHAR}, #{emptyWeight,jdbcType=VARCHAR},
+		#{maxTakeoffWeight,jdbcType=VARCHAR},
+		#{purpose,jdbcType=VARCHAR}, #{regDate,jdbcType=TIMESTAMP}, #{validDate,jdbcType=TIMESTAMP},
+		#{belongTo,jdbcType=VARCHAR}, #{belongId,jdbcType=VARCHAR},
+		#{status,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="UavEntity" keyProperty="id" useGeneratedKeys="true">
+		<selectKey keyProperty="id" order="BEFORE" resultType="java.lang.String">
+			select sys_guid() from dual
+		</selectKey> 
+		insert into UAV
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+				ID,
+			<if test="code != null">
+				CODE,
+			</if>
+				SN_NUMBER,
+			<if test="factoryId != null">
+				FACTORY_ID,
+			</if>
+			<if test="modelId != null">
+				MODEL_ID,
+			</if>
+			<if test="productName != null">
+				PRODUCT_NAME,
+			</if>
+			<if test="productType != null">
+				PRODUCT_TYPE,
+			</if>
+			<if test="emptyWeight != null">
+				EMPTY_WEIGHT,
+			</if>
+			<if test="maxTakeoffWeight != null">
+				MAX_TAKEOFF_WEIGHT,
+			</if>
+			<if test="purpose != null">
+				PURPOSE,
+			</if>
+			<if test="regDate != null">
+				REG_DATE,
+			</if>
+			<if test="validDate != null">
+				VALID_DATE,
+			</if>
+			<if test="belongTo != null">
+				BELONG_TO,
+			</if>
+			<if test="belongId != null">
+				BELONG_ID,
+			</if>
+			<if test="status != null">
+				STATUS,
+			</if>
+			<if test="reviewReason != null">
+				review_reason,
+			</if>
+			<if test="belongType != null">
+				BELONG_TYPE,
+			</if>
+			<if test="madeByself != null">
+				MADEBYSELF,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+				#{id,jdbcType=VARCHAR},
+			<if test="code != null">
+				#{code,jdbcType=VARCHAR},
+			</if>
+			<if test="snNumber != null">
+				#{snNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="factoryId != null">
+				#{factoryId,jdbcType=VARCHAR},
+			</if>
+			<if test="modelId != null">
+				#{modelId,jdbcType=VARCHAR},
+			</if>
+			<if test="productName != null">
+				#{productName,jdbcType=VARCHAR},
+			</if>
+			<if test="productType != null">
+				#{productType,jdbcType=VARCHAR},
+			</if>
+			<if test="emptyWeight != null">
+				#{emptyWeight,jdbcType=VARCHAR},
+			</if>
+			<if test="maxTakeoffWeight != null">
+				#{maxTakeoffWeight,jdbcType=VARCHAR},
+			</if>
+			<if test="purpose != null">
+				#{purpose,jdbcType=VARCHAR},
+			</if>
+			<if test="regDate != null">
+				#{regDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="validDate != null">
+				#{validDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="belongTo != null">
+				#{belongTo,jdbcType=VARCHAR},
+			</if>
+			<if test="belongId != null">
+				#{belongId,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=VARCHAR},
+			</if>
+			<if test="reviewReason != null">
+				#{reviewReason,jdbcType=VARCHAR},
+			</if>
+			<if test="belongType != null">
+				#{belongType,jdbcType=VARCHAR},
+			</if>
+			<if test="madeByself != null">
+				#{madeByself,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="UavEntity">
+		update UAV
+		<set>
+			<if test="code != null">
+				CODE = #{code,jdbcType=VARCHAR},
+			</if>
+			<if test="snNumber != null">
+				SN_NUMBER = #{snNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="factoryId != null">
+				FACTORY_ID = #{factoryId,jdbcType=VARCHAR},
+			</if>
+			<if test="modelId != null">
+				MODEL_ID = #{modelId,jdbcType=VARCHAR},
+			</if>
+			<if test="productName != null">
+				PRODUCT_NAME = #{productName,jdbcType=VARCHAR},
+			</if>
+			<if test="productType != null">
+				PRODUCT_TYPE = #{productType,jdbcType=VARCHAR},
+			</if>
+			<if test="emptyWeight != null">
+				EMPTY_WEIGHT = #{emptyWeight,jdbcType=VARCHAR},
+			</if>
+			<if test="maxTakeoffWeight != null">
+				MAX_TAKEOFF_WEIGHT = #{maxTakeoffWeight,jdbcType=VARCHAR},
+			</if>
+			<if test="purpose != null">
+				PURPOSE = #{purpose,jdbcType=VARCHAR},
+			</if>
+			<if test="regDate != null">
+				REG_DATE = #{regDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="validDate != null">
+				VALID_DATE = #{validDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="belongTo != null">
+				BELONG_TO = #{belongTo,jdbcType=VARCHAR},
+			</if>
+			<if test="belongId != null">
+				BELONG_ID = #{belongId,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				STATUS = #{status,jdbcType=VARCHAR},
+			</if>
+			<if test="review != null">
+				REVIEW = #{review,jdbcType=VARCHAR},
+			</if>
+			<if test="reviewReason != null">
+				REVIEW_REASON = #{reviewReason,jdbcType=VARCHAR},
+			</if>
+			<if test="reviewRemark != null">
+				REVIEW_REMARK = #{reviewRemark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="UavEntity">
+		update UAV
+		set CODE = #{code,jdbcType=VARCHAR},
+		SN_NUMBER = #{snNumber,jdbcType=VARCHAR},
+		FACTORY_ID = #{factoryId,jdbcType=VARCHAR},
+		MODEL_ID = #{modelId,jdbcType=VARCHAR},
+		PRODUCT_NAME = #{productName,jdbcType=VARCHAR},
+		PRODUCT_TYPE = #{productType,jdbcType=VARCHAR},
+		EMPTY_WEIGHT = #{emptyWeight,jdbcType=VARCHAR},
+		MAX_TAKEOFF_WEIGHT = #{maxTakeoffWeight,jdbcType=VARCHAR},
+		PURPOSE = #{purpose,jdbcType=VARCHAR},
+		REG_DATE = #{regDate,jdbcType=TIMESTAMP},
+		VALID_DATE = #{validDate,jdbcType=TIMESTAMP},
+		BELONG_TO = #{belongTo,jdbcType=VARCHAR},
+		BELONG_ID = #{belongId,jdbcType=VARCHAR},
+		STATUS = #{status,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<!-- 根据factoryId查modelId -->
+	<select id="selectByFactoryId" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		MODEL_ID
+		from UAV
+		<where>
+			<if test="factoryId != null and factoryId != ''">
+             <![CDATA[ 
+              AND FACTORY_ID = #{factoryId ,jdbcType=VARCHAR }
+             ]]>
+			</if>
+		</where>
+	</select>
+</mapper>

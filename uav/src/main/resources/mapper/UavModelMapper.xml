@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.google.business.dao.UavModelDAO" >
+  <resultMap id="BaseResultMap" type="UavModelEntity" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="MODEL_NAME" property="modelName" jdbcType="VARCHAR" />
+    <result column="PRODUCT_NAME" property="productName" jdbcType="VARCHAR" />
+    <result column="FACTORY_ID" property="factoryId" jdbcType="VARCHAR" />
+    <result column="PRODUCT_TYPE" property="productType" jdbcType="VARCHAR" />
+    <result column="EMPTY_WEIGHT" property="emptyWeight" jdbcType="VARCHAR" />
+    <result column="MAX_TAKEOFF_WEIGHT" property="maxTakeoffWeight" jdbcType="VARCHAR" />
+    <result column="PRODUCT_PHOTO_URL" property="productPhotoUrl" jdbcType="VARCHAR" />
+    <result column="PRODUCT_BIG_PHOTO_URL" property="productBigPhotoUrl" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, MODEL_NAME, PRODUCT_NAME, FACTORY_ID, PRODUCT_TYPE, EMPTY_WEIGHT, MAX_TAKEOFF_WEIGHT, 
+    PRODUCT_PHOTO_URL,PRODUCT_BIG_PHOTO_URL
+  </sql>
+  
+  <select id="selectUavModelList" resultMap="BaseResultMap" parameterType="UavModelEntity" >
+    select 
+    <include refid="Base_Column_List" />
+    from UAV_MODEL
+    <where>
+    	<if test="id != null and id != ''">
+              <![CDATA[ 
+               AND ID = #{id ,jdbcType=VARCHAR }
+              ]]>
+          </if>
+          <if test="factoryId != null and factoryId != ''">
+              <![CDATA[ 
+               AND FACTORY_ID = #{factoryId,jdbcType=VARCHAR}
+              ]]>
+          </if>
+    </where>
+  </select>
+  
+  <select id="selectUavModelList_count" resultType="java.lang.Integer" parameterType="UavModelEntity" >
+    select 
+     count(0)
+    from UAV_MODEL
+    <where>
+    	<if test="id != null and id != ''">
+              <![CDATA[ 
+               AND ID = #{id ,jdbcType=VARCHAR }
+              ]]>
+          </if>
+          <if test="factoryId != null and factoryId != ''">
+              <![CDATA[ 
+               AND FACTORY_ID = #{factoryId,jdbcType=VARCHAR}
+              ]]>
+          </if>
+    </where>
+  </select>
+  
+  <select id="selectUavModelOne" resultMap="BaseResultMap" parameterType="UavModelEntity" >
+    select 
+    <include refid="Base_Column_List" />
+    from UAV_MODEL
+    <where>
+          <if test="id != null and id != ''">
+              <![CDATA[ 
+               AND id = #{id ,jdbcType=VARCHAR }
+              ]]>
+          </if>
+      </where>
+  </select>
+  
+  <select id="queryUavModel" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from UAV_MODEL
+    where FACTORY_ID = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from UAV_MODEL
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from UAV_MODEL
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="UavModelEntity" >
+    insert into UAV_MODEL (ID, MODEL_NAME, PRODUCT_NAME, 
+      FACTORY_ID, PRODUCT_TYPE, EMPTY_WEIGHT, 
+      MAX_TAKEOFF_WEIGHT, PRODUCT_PHOTO_URL)
+    values (#{id,jdbcType=VARCHAR}, #{modelName,jdbcType=VARCHAR}, #{productName,jdbcType=VARCHAR}, 
+      #{factoryId,jdbcType=VARCHAR}, #{productType,jdbcType=VARCHAR}, #{emptyWeight,jdbcType=VARCHAR}, 
+      #{maxTakeoffWeight,jdbcType=VARCHAR}, #{productPhotoUrl,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="UavModelEntity" >
+    insert into UAV_MODEL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        ID,
+      <if test="modelName != null" >
+        MODEL_NAME,
+      </if>
+      <if test="productName != null" >
+        PRODUCT_NAME,
+      </if>
+      <if test="factoryId != null" >
+        FACTORY_ID,
+      </if>
+      <if test="productType != null" >
+        PRODUCT_TYPE,
+      </if>
+      <if test="emptyWeight != null" >
+        EMPTY_WEIGHT,
+      </if>
+      <if test="maxTakeoffWeight != null" >
+        MAX_TAKEOFF_WEIGHT,
+      </if>
+      <if test="productPhotoUrl != null" >
+        PRODUCT_PHOTO_URL,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+        UAV_MODEL_SEQ.NEXTVAL,
+      <if test="modelName != null" >
+        #{modelName,jdbcType=VARCHAR},
+      </if>
+      <if test="productName != null" >
+        #{productName,jdbcType=VARCHAR},
+      </if>
+      <if test="factoryId != null" >
+        #{factoryId,jdbcType=VARCHAR},
+      </if>
+      <if test="productType != null" >
+        #{productType,jdbcType=VARCHAR},
+      </if>
+      <if test="emptyWeight != null" >
+        #{emptyWeight,jdbcType=VARCHAR},
+      </if>
+      <if test="maxTakeoffWeight != null" >
+        #{maxTakeoffWeight,jdbcType=VARCHAR},
+      </if>
+      <if test="productPhotoUrl != null" >
+        #{productPhotoUrl,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="UavModelEntity" >
+    update UAV_MODEL
+    <set >
+      <if test="modelName != null" >
+        MODEL_NAME = #{modelName,jdbcType=VARCHAR},
+      </if>
+      <if test="productName != null" >
+        PRODUCT_NAME = #{productName,jdbcType=VARCHAR},
+      </if>
+      <if test="factoryId != null" >
+        FACTORY_ID = #{factoryId,jdbcType=VARCHAR},
+      </if>
+      <if test="productType != null" >
+        PRODUCT_TYPE = #{productType,jdbcType=VARCHAR},
+      </if>
+      <if test="emptyWeight != null" >
+        EMPTY_WEIGHT = #{emptyWeight,jdbcType=VARCHAR},
+      </if>
+      <if test="maxTakeoffWeight != null" >
+        MAX_TAKEOFF_WEIGHT = #{maxTakeoffWeight,jdbcType=VARCHAR},
+      </if>
+      <if test="productPhotoUrl != null" >
+        PRODUCT_PHOTO_URL = #{productPhotoUrl,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="UavModelEntity" >
+    update UAV_MODEL
+    set MODEL_NAME = #{modelName,jdbcType=VARCHAR},
+      PRODUCT_NAME = #{productName,jdbcType=VARCHAR},
+      FACTORY_ID = #{factoryId,jdbcType=VARCHAR},
+      PRODUCT_TYPE = #{productType,jdbcType=VARCHAR},
+      EMPTY_WEIGHT = #{emptyWeight,jdbcType=VARCHAR},
+      MAX_TAKEOFF_WEIGHT = #{maxTakeoffWeight,jdbcType=VARCHAR},
+      PRODUCT_PHOTO_URL = #{productPhotoUrl,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>
