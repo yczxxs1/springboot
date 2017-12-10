@@ -1,0 +1,17 @@
+server:
+  port: 2001
+spring:
+  application:
+    name: eureka-client0
+  cloud:
+    config:
+      discovery:
+        service-id: config-server
+        enabled: true
+      profile: default
+      label: master
+eureka:
+  client:
+    service-url:
+       defaultZone: http://peer1:1010/eureka/,http://peer2:1011/eureka/                
+      

@@ -1,0 +1,27 @@
+server:
+  port: 2010
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/yczxxs1/config.git
+          username: yczxxs1
+          password: g1o2o3d4
+    bus:
+      trace:
+        enabled: true      
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+management:
+  security:
+    enabled: false 
+eureka:
+  client:
+    service-url:
+       defaultZone: http://peer1:1010/eureka/, http://peer2:1011/eureka/                    

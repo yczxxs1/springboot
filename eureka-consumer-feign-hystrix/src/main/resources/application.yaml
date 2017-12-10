@@ -1,0 +1,22 @@
+server:
+  port: 2007
+spring:
+  application:
+    name: eureka-consumer-feign
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:1010/eureka/
+logging:
+  level:
+    root: debug
+feign:
+  hystrix:
+    enabled: true
+    
+    
+turbine:
+  app-config: eureka-consumer-feign
+  cluster-name-expression: "default"
+  combine-host-port: true
+       
