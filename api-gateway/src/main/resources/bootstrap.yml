@@ -1,0 +1,24 @@
+server:
+  port: 2006
+spring:
+  application:
+    name: api-gate
+  cloud:   
+   config:
+      discovery:
+        service-id: config-server
+        enabled: true
+      profile: default
+      label: master
+eureka:
+  client:
+    service-url:
+       defaultZone: http://peer1:1010/eureka/,http://peer2:1011/eureka/      
+#默认匹配规则是应用名       
+zuul:
+  routes:
+    eureka-client0: a/**
+    eureka-consumer-feign: b/**
+  host:
+    connect-timeout-millis: 600000  
+    socket-timeout-millis: 600000    
