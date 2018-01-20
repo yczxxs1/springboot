@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.netflix.business.dao.PostCommentMapper">
+  <resultMap id="BaseResultMap" type="com.netflix.business.dto.PostCommentDTO">
+    <id column="COMMENT_ID" jdbcType="VARCHAR" property="commentId" />
+    <result column="COMMENT_CONTENT" jdbcType="VARCHAR" property="commentContent" />
+    <result column="COMMENT_USER_ID" jdbcType="VARCHAR" property="commentUserId" />
+    <result column="COMMENT_POST_ID" jdbcType="VARCHAR" property="commentPostId" />
+    <result column="COMMENT_CREATE_TIME" jdbcType="TIMESTAMP" property="commentCreateTime" />
+     <result column="NAME" jdbcType="VARCHAR" property="commentUserName" />
+     <result column="AVATAR" jdbcType="VARCHAR" property="commentUserAvatar" />
+     <result column="COMMENT_LIKE_COUNT" jdbcType="INTEGER" property="commentLikeCount" />
+  </resultMap>
+  
+  
+  <sql id="Base_Column_List">
+    COMMENT_ID, COMMENT_CONTENT, COMMENT_USER_ID, COMMENT_POST_ID, COMMENT_CREATE_TIME,NAME,AVATAR,
+    (select count(*) from LIKE_UP where LIKE_OBJECT_ID = COMMENT_ID) AS COMMENT_LIKE_COUNT   
+  </sql>
+  
+  <select id="selectByPrimaryKey"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from POST_COMMENT A INNER JOIN USERS B ON A.COMMENT_USER_ID=B.ID
+    where COMMENT_ID = #{commentId,jdbcType=VARCHAR}
+  </select>
+  
+  
+   <select id="selectList" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from POST_COMMENT A INNER JOIN USERS B ON A.COMMENT_USER_ID=B.ID
+    <where>
+      <if test="commentPostId!=null">
+        COMMENT_POST_ID = #{commentPostId,jdbcType=VARCHAR}
+     </if>
+    </where> 
+  </select>
+  
+  
+   <select id="selectListByPostId" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from POST_COMMENT A INNER JOIN USERS B ON A.COMMENT_USER_ID=B.ID
+      where  COMMENT_POST_ID = #{commentPostId,jdbcType=VARCHAR}
+      order by COMMENT_CREATE_TIME desc
+  </select>
+  
+  
+  <select id="selectCountbyCondition" resultType="java.lang.Integer">
+    select 
+    count(*)
+    from POST_COMMENT A INNER JOIN POST B ON A.COMMENT_POST_ID=B.POST_ID
+      <where>
+      <if test="commentPostId!=null">
+        AND COMMENT_POST_ID = #{commentPostId,jdbcType=VARCHAR}
+      </if>
+      <if test="myPostListVisitTime!=null">
+         AND COMMENT_CREATE_TIME between #{myPostListVisitTime,jdbcType=TIMESTAMP} and sysdate
+      </if>
+      <if test="postUserId!=null">
+        AND POST_USER_ID= #{postUserId,jdbcType=VARCHAR} AND COMMENT_USER_ID!=#{postUserId,jdbcType=VARCHAR}
+      </if>
+      </where>
+  </select>
+  
+  
+  
+  
+  
+  <select id="selectCountByPostId"  resultType="java.lang.Integer" >
+    select 
+   count(*)
+    from POST_COMMENT
+    where COMMENT_POST_ID = #{commentPostId,jdbcType=VARCHAR}
+  </select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from POST_COMMENT
+    where COMMENT_ID = #{commentId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.netflix.business.domain.PostComment">
+    insert into POST_COMMENT (COMMENT_ID, COMMENT_CONTENT, COMMENT_USER_ID, 
+      COMMENT_POST_ID, COMMENT_CREATE_TIME)
+    values (#{commentId,jdbcType=VARCHAR}, #{commentContent,jdbcType=VARCHAR}, #{commentUserId,jdbcType=VARCHAR}, 
+      #{commentPostId,jdbcType=VARCHAR}, #{commentCreateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.netflix.business.domain.PostComment">
+    insert into POST_COMMENT
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+     
+        COMMENT_ID,
+  
+      <if test="commentContent != null">
+        COMMENT_CONTENT,
+      </if>
+      <if test="commentUserId != null">
+        COMMENT_USER_ID,
+      </if>
+      <if test="commentPostId != null">
+        COMMENT_POST_ID,
+      </if>
+      <if test="commentCreateTime != null">
+        COMMENT_CREATE_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+     
+       sys_guid(),
+   
+      <if test="commentContent != null">
+        #{commentContent,jdbcType=VARCHAR},
+      </if>
+      <if test="commentUserId != null">
+        #{commentUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="commentPostId != null">
+        #{commentPostId,jdbcType=VARCHAR},
+      </if>
+      <if test="commentCreateTime != null">
+        #{commentCreateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.netflix.business.domain.PostComment">
+    update POST_COMMENT
+    <set>
+      <if test="commentContent != null">
+        COMMENT_CONTENT = #{commentContent,jdbcType=VARCHAR},
+      </if>
+      <if test="commentUserId != null">
+        COMMENT_USER_ID = #{commentUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="commentPostId != null">
+        COMMENT_POST_ID = #{commentPostId,jdbcType=VARCHAR},
+      </if>
+      <if test="commentCreateTime != null">
+        COMMENT_CREATE_TIME = #{commentCreateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where COMMENT_ID = #{commentId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.netflix.business.domain.PostComment">
+    update POST_COMMENT
+    set COMMENT_CONTENT = #{commentContent,jdbcType=VARCHAR},
+      COMMENT_USER_ID = #{commentUserId,jdbcType=VARCHAR},
+      COMMENT_POST_ID = #{commentPostId,jdbcType=VARCHAR},
+      COMMENT_CREATE_TIME = #{commentCreateTime,jdbcType=TIMESTAMP}
+    where COMMENT_ID = #{commentId,jdbcType=VARCHAR}
+  </update>
+</mapper>

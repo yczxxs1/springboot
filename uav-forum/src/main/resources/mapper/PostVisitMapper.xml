@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.netflix.business.dao.PostVisitMapper">
+  <resultMap id="BaseResultMap" type="com.netflix.business.domain.PostVisit">
+    <id column="POST_VISIT_ID" jdbcType="VARCHAR" property="postVisitId" />
+    <result column="POST_VISIT_DATE" jdbcType="TIMESTAMP" property="postVisitDate" />
+    <result column="POST_VISIT_USER_ID" jdbcType="VARCHAR" property="postVisitUserId" />
+    <result column="POST_VISIT_POST_ID" jdbcType="VARCHAR" property="postVisitPostId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    POST_VISIT_ID, POST_VISIT_DATE, POST_VISIT_USER_ID, POST_VISIT_POST_ID
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from POST_VISIT
+    where POST_VISIT_ID = #{postVisitId,jdbcType=VARCHAR}
+  </select>
+  
+    <select id="selectCountByPostId" resultType="java.lang.Integer" >
+    select 
+    count(*)
+    from POST_VISIT
+    where POST_VISIT_POST_ID = #{postVisitPostId,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from POST_VISIT
+    where POST_VISIT_ID = #{postVisitId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.netflix.business.domain.PostVisit">
+    insert into POST_VISIT (POST_VISIT_ID, POST_VISIT_DATE, POST_VISIT_USER_ID, 
+      POST_VISIT_POST_ID)
+    values (#{postVisitId,jdbcType=VARCHAR}, #{postVisitDate,jdbcType=TIMESTAMP}, #{postVisitUserId,jdbcType=VARCHAR}, 
+      #{postVisitPostId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.netflix.business.domain.PostVisit">
+    insert into POST_VISIT
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+     
+        POST_VISIT_ID,
+   
+      <if test="postVisitDate != null">
+        POST_VISIT_DATE,
+      </if>
+      <if test="postVisitUserId != null">
+        POST_VISIT_USER_ID,
+      </if>
+      <if test="postVisitPostId != null">
+        POST_VISIT_POST_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+     
+       sys_guid(),
+     
+      <if test="postVisitDate != null">
+        #{postVisitDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="postVisitUserId != null">
+        #{postVisitUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="postVisitPostId != null">
+        #{postVisitPostId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.netflix.business.domain.PostVisit">
+    update POST_VISIT
+    <set>
+      <if test="postVisitDate != null">
+        POST_VISIT_DATE = #{postVisitDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="postVisitUserId != null">
+        POST_VISIT_USER_ID = #{postVisitUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="postVisitPostId != null">
+        POST_VISIT_POST_ID = #{postVisitPostId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where POST_VISIT_ID = #{postVisitId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.netflix.business.domain.PostVisit">
+    update POST_VISIT
+    set POST_VISIT_DATE = #{postVisitDate,jdbcType=TIMESTAMP},
+      POST_VISIT_USER_ID = #{postVisitUserId,jdbcType=VARCHAR},
+      POST_VISIT_POST_ID = #{postVisitPostId,jdbcType=VARCHAR}
+    where POST_VISIT_ID = #{postVisitId,jdbcType=VARCHAR}
+  </update>
+</mapper>

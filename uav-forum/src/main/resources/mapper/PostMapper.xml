@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.netflix.business.dao.PostMapper">
+	<resultMap id="BaseResultMap" type="com.netflix.business.dto.PostDTO">
+		<id column="POST_ID" jdbcType="VARCHAR" property="postId" />
+		<result column="POST_TITLE" jdbcType="VARCHAR" property="postTitle" />
+		<result column="POST_CONTENT" jdbcType="VARCHAR" property="postContent" />
+		<result column="POST_USER_ID" jdbcType="VARCHAR" property="postUserId" />
+		<result column="POST_CREATE_TIME" jdbcType="TIMESTAMP"
+			property="postCreateTime" />
+		<result column="NAME" jdbcType="VARCHAR" property="postUserName" />
+		<result column="AVATAR" jdbcType="VARCHAR" property="postUserAvatar" />
+		<result column="COMMENT_COUNT" jdbcType="INTEGER" property="commentCount" />
+		<result column="POST_LIKE_COUNT" jdbcType="INTEGER" property="postLikeCount" />
+		<result column="POST_VIEWS" jdbcType="INTEGER" property="postViews" />
+		<result column="POST_IMG_COUNT" jdbcType="INTEGER" property="postImgCount" />		
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		POST_ID, POST_TITLE, POST_CONTENT, POST_USER_ID,
+		POST_CREATE_TIME,NAME,AVATAR,
+		(select count(*) from POST_COMMENT where
+		COMMENT_POST_ID = POST_ID) AS COMMENT_COUNT,
+		(select count(*) from
+		LIKE_UP where LIKE_OBJECT_ID = POST_ID) AS POST_LIKE_COUNT,
+		(select
+		count(*) from POST_VISIT where POST_VISIT_POST_ID = POST_ID) AS
+		POST_VIEWS,
+		(select count(*) from POST_IMG where
+		POST_IMG_POST_ID=POST_ID) AS
+		POST_IMG_COUNT,
+		(SELECT max(COMMENT_CREATE_TIME) FROM POST_COMMENT group by COMMENT_POST_ID having COMMENT_POST_ID=POST_ID)AS LATEST_COMMENT_TIME
+
+	</sql>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from POST A INNER JOIN USERS B ON A.POST_USER_ID=B.ID
+		where POST_ID =
+		#{postId,jdbcType=VARCHAR}
+	</select>
+
+	<select id="selectList" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from POST A INNER JOIN USERS B ON A.POST_USER_ID=B.ID
+		<where>
+
+			<if test="postUserId != null">
+				AND POST_USER_ID=#{postUserId,jdbcType=VARCHAR}
+			</if>
+
+		</where>
+		<choose>
+			<when test="postSortField == 'postHeat'">
+					order by COMMENT_COUNT desc,POST_LIKE_COUNT desc,
+				POST_CREATE_TIME desc
+			</when>
+			<when test="postSortField == 'latestComment'">
+					order by LATEST_COMMENT_TIME desc
+			</when>
+			<otherwise>
+				order by POST_CREATE_TIME desc
+			</otherwise>
+		</choose>
+
+	</select>
+	
+	<select id="selectCountByCondition" 
+		resultType="java.lang.Integer">
+		select
+		count(*)
+		from POST 
+	<where>
+	 <if test="postListVisitTime!=null">
+	  AND  POST_CREATE_TIME BETWEEN  #{postListVisitTime,jdbcType=TIMESTAMP} AND SYSDATE
+	 </if>
+	</where>
+	</select>
+	
+	
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from POST
+		where POST_ID = #{postId,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" keyProperty="postId" useGeneratedKeys="true">
+		<selectKey keyProperty="postId" order="BEFORE" resultType="java.lang.String">
+			select sys_guid() from dual
+		</selectKey>
+		insert into POST (POST_ID, POST_TITLE, POST_CONTENT,
+		POST_USER_ID,
+		POST_CREATE_TIME)
+		values (#{postId,jdbcType=VARCHAR},
+		#{postTitle,jdbcType=VARCHAR},
+		#{postContent,jdbcType=VARCHAR},
+		#{postUserId,jdbcType=VARCHAR}, #{postCreateTime,jdbcType=TIMESTAMP})
+	</insert>
+	<insert id="insertSelective" keyProperty="postId"
+		useGeneratedKeys="true">
+		<selectKey keyProperty="postId" order="BEFORE" resultType="java.lang.String">
+			select sys_guid() from dual
+		</selectKey>
+		insert into POST
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="postId != null">
+				POST_ID,
+			</if>
+			<if test="postTitle != null">
+				POST_TITLE,
+			</if>
+			<if test="postContent != null">
+				POST_CONTENT,
+			</if>
+			<if test="postUserId != null">
+				POST_USER_ID,
+			</if>
+			<if test="postCreateTime != null">
+				POST_CREATE_TIME,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="postId != null">
+				#{postId,jdbcType=VARCHAR},
+			</if>
+			<if test="postTitle != null">
+				#{postTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="postContent != null">
+				#{postContent,jdbcType=VARCHAR},
+			</if>
+			<if test="postUserId != null">
+				#{postUserId,jdbcType=VARCHAR},
+			</if>
+			<if test="postCreateTime != null">
+				#{postCreateTime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.netflix.business.domain.Post">
+		update POST
+		<set>
+			<if test="postTitle != null">
+				POST_TITLE = #{postTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="postContent != null">
+				POST_CONTENT = #{postContent,jdbcType=VARCHAR},
+			</if>
+			<if test="postUserId != null">
+				POST_USER_ID = #{postUserId,jdbcType=VARCHAR},
+			</if>
+			<if test="postCreateTime != null">
+				POST_CREATE_TIME = #{postCreateTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where POST_ID = #{postId,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.netflix.business.domain.Post">
+		update POST
+		set
+		POST_TITLE = #{postTitle,jdbcType=VARCHAR},
+		POST_CONTENT =
+		#{postContent,jdbcType=VARCHAR},
+		POST_USER_ID =
+		#{postUserId,jdbcType=VARCHAR},
+		POST_CREATE_TIME =
+		#{postCreateTime,jdbcType=TIMESTAMP}
+		where POST_ID =
+		#{postId,jdbcType=VARCHAR}
+	</update>
+</mapper>

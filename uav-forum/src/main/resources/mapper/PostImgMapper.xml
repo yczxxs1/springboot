@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.netflix.business.dao.PostImgMapper">
+  <resultMap id="BaseResultMap" type="com.netflix.business.domain.PostImg">
+    <id column="POST_IMG_ID" jdbcType="VARCHAR" property="postImgId" />
+    <result column="POST_IMG_URL" jdbcType="VARCHAR" property="postImgUrl" />
+    <result column="POST_IMG_HEIGHT" jdbcType="INTEGER" property="postImgHeight" />
+    <result column="POST_IMG_WIDTH" jdbcType="INTEGER" property="postImgWidth" />
+    <result column="POST_IMG_POST_ID" jdbcType="VARCHAR" property="postImgPostId" />
+    <result column="POST_IMG_CREATE_TIME" jdbcType="TIMESTAMP" property="postImgCreateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    POST_IMG_ID, POST_IMG_URL, POST_IMG_HEIGHT, POST_IMG_WIDTH, POST_IMG_POST_ID, POST_IMG_CREATE_TIME
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from POST_IMG
+    where POST_IMG_ID = #{postImgId,jdbcType=VARCHAR}
+  </select>
+  
+  
+  <select id="selectCountByPostId" resultType="java.lang.Integer">
+    select 
+    count(*)
+    from POST_IMG
+    where POST_IMG_POST_ID = #{postImgPostId,jdbcType=VARCHAR}
+  </select>
+  
+   <select id="selectListByPostId" resultMap="BaseResultMap">
+    select 
+    *
+    from POST_IMG
+    where POST_IMG_POST_ID = #{postImgPostId,jdbcType=VARCHAR}
+  </select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from POST_IMG
+    where POST_IMG_ID = #{postImgId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.netflix.business.domain.PostImg">
+    insert into POST_IMG (POST_IMG_ID, POST_IMG_URL, POST_IMG_HEIGHT, 
+      POST_IMG_WIDTH, POST_IMG_POST_ID, POST_IMG_CREATE_TIME
+      )
+    values (#{postImgId,jdbcType=VARCHAR}, #{postImgUrl,jdbcType=VARCHAR}, #{postImgHeight,jdbcType=INTEGER}, 
+      #{postImgWidth,jdbcType=INTEGER}, #{postImgPostId,jdbcType=VARCHAR}, #{postImgCreateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.netflix.business.domain.PostImg">
+    insert into POST_IMG
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+    
+        POST_IMG_ID,
+     
+      <if test="postImgUrl != null">
+        POST_IMG_URL,
+      </if>
+      <if test="postImgHeight != null">
+        POST_IMG_HEIGHT,
+      </if>
+      <if test="postImgWidth != null">
+        POST_IMG_WIDTH,
+      </if>
+      <if test="postImgPostId != null">
+        POST_IMG_POST_ID,
+      </if>
+      <if test="postImgCreateTime != null">
+        POST_IMG_CREATE_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+
+       sys_guid(),
+  
+      <if test="postImgUrl != null">
+        #{postImgUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="postImgHeight != null">
+        #{postImgHeight,jdbcType=INTEGER},
+      </if>
+      <if test="postImgWidth != null">
+        #{postImgWidth,jdbcType=INTEGER},
+      </if>
+      <if test="postImgPostId != null">
+        #{postImgPostId,jdbcType=VARCHAR},
+      </if>
+      <if test="postImgCreateTime != null">
+        #{postImgCreateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.netflix.business.domain.PostImg">
+    update POST_IMG
+    <set>
+      <if test="postImgUrl != null">
+        POST_IMG_URL = #{postImgUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="postImgHeight != null">
+        POST_IMG_HEIGHT = #{postImgHeight,jdbcType=INTEGER},
+      </if>
+      <if test="postImgWidth != null">
+        POST_IMG_WIDTH = #{postImgWidth,jdbcType=INTEGER},
+      </if>
+      <if test="postImgPostId != null">
+        POST_IMG_POST_ID = #{postImgPostId,jdbcType=VARCHAR},
+      </if>
+      <if test="postImgCreateTime != null">
+        POST_IMG_CREATE_TIME = #{postImgCreateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where POST_IMG_ID = #{postImgId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.netflix.business.domain.PostImg">
+    update POST_IMG
+    set POST_IMG_URL = #{postImgUrl,jdbcType=VARCHAR},
+      POST_IMG_HEIGHT = #{postImgHeight,jdbcType=INTEGER},
+      POST_IMG_WIDTH = #{postImgWidth,jdbcType=INTEGER},
+      POST_IMG_POST_ID = #{postImgPostId,jdbcType=VARCHAR},
+      POST_IMG_CREATE_TIME = #{postImgCreateTime,jdbcType=TIMESTAMP}
+    where POST_IMG_ID = #{postImgId,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.netflix.business.dao.ReplyMapper">
+  <resultMap id="BaseResultMap" type="com.netflix.business.dto.ReplyDTO">
+    <id column="REPLY_ID" jdbcType="VARCHAR" property="replyId" />
+    <result column="REPLY_CONTENT" jdbcType="VARCHAR" property="replyContent" />
+    <result column="REPLY_USER_ID" jdbcType="VARCHAR" property="replyUserId" />
+    <result column="REPLY_COMMENT_ID" jdbcType="VARCHAR" property="replyCommentId" />
+    <result column="REPLY_CREATE_TIME" jdbcType="TIMESTAMP" property="replyCreateTime" />
+    <result column="NAME" jdbcType="VARCHAR" property="replyUserName" />
+    <result column="AVATAR" jdbcType="VARCHAR" property="replyUserAvatar" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    REPLY_ID, REPLY_CONTENT, REPLY_USER_ID, REPLY_COMMENT_ID, REPLY_CREATE_TIME,NAME,AVATAR
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from REPLY A INNER JOIN USERS B ON A.REPLY_USER_ID=B.ID
+    where REPLY_ID = #{replyId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectListByCommentId" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+     from REPLY A INNER JOIN USERS B ON A.REPLY_USER_ID=B.ID
+     where REPLY_COMMENT_ID = #{replyCommentId,jdbcType=VARCHAR}
+     
+     order by REPLY_CREATE_TIME desc
+  </select>
+  
+  <select id="selectCountByCommentId"  resultType="java.lang.Integer">
+    select 
+    count(*)
+    from REPLY
+    where REPLY_COMMENT_ID = #{replyCommentId,jdbcType=VARCHAR}
+  </select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from REPLY
+    where REPLY_ID = #{replyId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.netflix.business.domain.Reply">
+    insert into REPLY (REPLY_ID, REPLY_CONTENT, REPLY_USER_ID, 
+      REPLY_COMMENT_ID, REPLY_CREATE_TIME)
+    values (#{replyId,jdbcType=VARCHAR}, #{replyContent,jdbcType=VARCHAR}, #{replyUserId,jdbcType=VARCHAR}, 
+      #{replyCommentId,jdbcType=VARCHAR}, #{replyCreateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.netflix.business.domain.Reply">
+    insert into REPLY
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+   
+        REPLY_ID,
+   
+      <if test="replyContent != null">
+        REPLY_CONTENT,
+      </if>
+      <if test="replyUserId != null">
+        REPLY_USER_ID,
+      </if>
+      <if test="replyCommentId != null">
+        REPLY_COMMENT_ID,
+      </if>
+      <if test="replyCreateTime != null">
+        REPLY_CREATE_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+     sys_guid(),
+      <if test="replyContent != null">
+        #{replyContent,jdbcType=VARCHAR},
+      </if>
+      <if test="replyUserId != null">
+        #{replyUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="replyCommentId != null">
+        #{replyCommentId,jdbcType=VARCHAR},
+      </if>
+      <if test="replyCreateTime != null">
+        #{replyCreateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.netflix.business.domain.Reply">
+    update REPLY
+    <set>
+      <if test="replyContent != null">
+        REPLY_CONTENT = #{replyContent,jdbcType=VARCHAR},
+      </if>
+      <if test="replyUserId != null">
+        REPLY_USER_ID = #{replyUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="replyCommentId != null">
+        REPLY_COMMENT_ID = #{replyCommentId,jdbcType=VARCHAR},
+      </if>
+      <if test="replyCreateTime != null">
+        REPLY_CREATE_TIME = #{replyCreateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where REPLY_ID = #{replyId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.netflix.business.domain.Reply">
+    update REPLY
+    set REPLY_CONTENT = #{replyContent,jdbcType=VARCHAR},
+      REPLY_USER_ID = #{replyUserId,jdbcType=VARCHAR},
+      REPLY_COMMENT_ID = #{replyCommentId,jdbcType=VARCHAR},
+      REPLY_CREATE_TIME = #{replyCreateTime,jdbcType=TIMESTAMP}
+    where REPLY_ID = #{replyId,jdbcType=VARCHAR}
+  </update>
+</mapper>

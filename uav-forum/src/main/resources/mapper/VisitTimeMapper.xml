@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.netflix.business.dao.VisitTimeMapper">
+  <resultMap id="BaseResultMap" type="com.netflix.business.domain.VisitTime">
+    <id column="VISIT_TIME_ID" jdbcType="VARCHAR" property="visitTimeId" />
+    <result column="VISIT_TIME_POST" jdbcType="TIMESTAMP" property="visitTimePost" />
+    <result column="VISIT_TIME_MY_POST" jdbcType="TIMESTAMP" property="visitTimeMyPost" />
+    <result column="VISIT_TIME_USER_ID" jdbcType="VARCHAR" property="visitTimeUserId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    VISIT_TIME_ID, VISIT_TIME_POST, VISIT_TIME_MY_POST, VISIT_TIME_USER_ID
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from VISIT_TIME
+    where VISIT_TIME_ID = #{visitTimeId,jdbcType=VARCHAR}
+  </select>
+  
+   <select id="selectByVisitTimeUserId"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from VISIT_TIME
+    where VISIT_TIME_USER_ID = #{visitTimeUserId,jdbcType=VARCHAR}
+  </select>
+  
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from VISIT_TIME
+    where VISIT_TIME_ID = #{visitTimeId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.netflix.business.domain.VisitTime">
+    insert into VISIT_TIME (VISIT_TIME_ID, VISIT_TIME_POST, VISIT_TIME_MY_POST, 
+      VISIT_TIME_USER_ID)
+    values (#{visitTimeId,jdbcType=VARCHAR}, #{visitTimePost,jdbcType=TIMESTAMP}, #{visitTimeMyPost,jdbcType=TIMESTAMP}, 
+      #{visitTimeUserId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.netflix.business.domain.VisitTime">
+    insert into VISIT_TIME
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+        VISIT_TIME_ID,
+      <if test="visitTimePost != null">
+        VISIT_TIME_POST,
+      </if>
+      <if test="visitTimeMyPost != null">
+        VISIT_TIME_MY_POST,
+      </if>
+      <if test="visitTimeUserId != null">
+        VISIT_TIME_USER_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      sys_guid(),
+      <if test="visitTimePost != null">
+        #{visitTimePost,jdbcType=TIMESTAMP},
+      </if>
+      <if test="visitTimeMyPost != null">
+        #{visitTimeMyPost,jdbcType=TIMESTAMP},
+      </if>
+      <if test="visitTimeUserId != null">
+        #{visitTimeUserId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.netflix.business.domain.VisitTime">
+    update VISIT_TIME
+    <set>
+      <if test="visitTimePost != null">
+        VISIT_TIME_POST = #{visitTimePost,jdbcType=TIMESTAMP},
+      </if>
+      <if test="visitTimeMyPost != null">
+        VISIT_TIME_MY_POST = #{visitTimeMyPost,jdbcType=TIMESTAMP},
+      </if>
+      <if test="visitTimeUserId != null">
+        VISIT_TIME_USER_ID = #{visitTimeUserId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where VISIT_TIME_ID = #{visitTimeId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.netflix.business.domain.VisitTime">
+    update VISIT_TIME
+    set VISIT_TIME_POST = #{visitTimePost,jdbcType=TIMESTAMP},
+      VISIT_TIME_MY_POST = #{visitTimeMyPost,jdbcType=TIMESTAMP},
+      VISIT_TIME_USER_ID = #{visitTimeUserId,jdbcType=VARCHAR}
+    where VISIT_TIME_ID = #{visitTimeId,jdbcType=VARCHAR}
+  </update>
+</mapper>

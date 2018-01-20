@@ -1,0 +1,28 @@
+server:
+  port: 7070
+spring:
+  http:
+    multipart:
+     max-file-size: 5MB
+     max-request-size: 25MB   
+  application:
+    name: uav-forum
+  profiles:
+    active:
+    - dev  
+mybatis:
+  mapper-locations:
+  - classpath:mapper/*.xml  
+swagger:
+  title: 论坛接口文档
+  version: 1.0.0
+  base-package: com.netflix 
+info:
+  appName: ${spring.application.name} 
+management:
+  security:
+    enabled: false
+  port: 7072
+endpoints:
+  shutdown:
+    enabled: true  
