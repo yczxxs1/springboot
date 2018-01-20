@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kaituo.communitypolicing.business.dao.BungalowMapper">
+  <resultMap id="domainResultMap" type="com.kaituo.communitypolicing.business.domain.Bungalow">
+   <id column="BUILDING_ID" jdbcType="VARCHAR" property="buildingId" />
+    <result column="BUILDING_NAME" jdbcType="VARCHAR" property="buildingName" />
+    <result column="BUILDING_TYPE" jdbcType="VARCHAR" property="buildingType" />
+    <result column="LONGITUDE"  jdbcType="FLOAT" property="coordinate.longitude"/>
+    <result column="LATITUDE"    jdbcType="FLOAT" property="coordinate.latitude"/>
+    <association property="houseInfo"
+                     javaType="com.kaituo.communitypolicing.business.domain.HouseInfo">
+			<result column="HOUSE_AREA" jdbcType="FLOAT" property="houseArea" />
+			<result column="HOUSE_PURPOSE" jdbcType="VARCHAR" property="housePurpose" />
+			<result column="HOUSE_TYPE" jdbcType="VARCHAR" property="houseType" />
+			<result column="HOUSE_HOLDER" jdbcType="VARCHAR" property="houseHolder" />
+		</association>
+  </resultMap>
+  <resultMap extends="domainResultMap" id="domainResultMapWithBLOBs" type="com.kaituo.communitypolicing.business.domain.Bungalow">
+    <result column="BUNGALOW_IMG_URL" jdbcType="CLOB" property="bungalowImgUrl" />
+  </resultMap>
+  <sql id="Blob_Column_List">
+    BUNGALOW_IMG_URL
+  </sql>
+  	<sql id="Base_Column_List">
+		a.BUILDING_ID,  HOUSE_AREA, HOUSE_PURPOSE, HOUSE_TYPE, HOUSE_HOLDER
+	</sql>
+  
+  <select id="selectBungalowById" resultMap="domainResultMapWithBLOBs">
+
+
+     select 
+     BUILDING_NAME, BUILDING_TYPE,
+    <include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+   from BUILDING  a right join bungalow b on a.building_id=b.building_id
+    
+    where a.BUILDING_ID = #{buildingId,jdbcType=VARCHAR}
+
+   
+  
+  </select>
+  
+  <insert id="insert" parameterType="com.kaituo.communitypolicing.business.model.Bungalow">
+    insert into BUNGALOW (HOUSE_AREA, HOUSE_PURPOSE, HOUSE_TYPE, 
+      HOUSE_HOLDER, BUILDING_ID, BUNGALOW_IMG_URL
+      )
+    values (#{houseArea,jdbcType=FLOAT}, #{housePurpose,jdbcType=VARCHAR}, #{houseType,jdbcType=VARCHAR}, 
+      #{houseHolder,jdbcType=VARCHAR}, #{buildingId,jdbcType=VARCHAR}, #{bungalowImgUrl,jdbcType=CLOB}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.kaituo.communitypolicing.business.model.Bungalow">
+    insert into BUNGALOW
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="houseArea != null">
+        HOUSE_AREA,
+      </if>
+      <if test="housePurpose != null">
+        HOUSE_PURPOSE,
+      </if>
+      <if test="houseType != null">
+        HOUSE_TYPE,
+      </if>
+      <if test="houseHolder != null">
+        HOUSE_HOLDER,
+      </if>
+      <if test="buildingId != null">
+        BUILDING_ID,
+      </if>
+      <if test="bungalowImgUrl != null">
+        BUNGALOW_IMG_URL,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="houseArea != null">
+        #{houseArea,jdbcType=FLOAT},
+      </if>
+      <if test="housePurpose != null">
+        #{housePurpose,jdbcType=VARCHAR},
+      </if>
+      <if test="houseType != null">
+        #{houseType,jdbcType=VARCHAR},
+      </if>
+      <if test="houseHolder != null">
+        #{houseHolder,jdbcType=VARCHAR},
+      </if>
+      <if test="buildingId != null">
+        #{buildingId,jdbcType=VARCHAR},
+      </if>
+      <if test="bungalowImgUrl != null">
+        #{bungalowImgUrl,jdbcType=CLOB},
+      </if>
+    </trim>
+  </insert>
+</mapper>

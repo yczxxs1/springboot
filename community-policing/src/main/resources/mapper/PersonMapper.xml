@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kaituo.communitypolicing.business.dao.PersonMapper">
+  <resultMap id="domainResultMap" type="com.kaituo.communitypolicing.business.domain.Person">
+    <id column="PERSON_ID" jdbcType="VARCHAR" property="personId" />
+    <result column="PERSON_NAME" jdbcType="VARCHAR" property="personName" />
+    <result column="PERSON_NATION" jdbcType="VARCHAR" property="personNation" />
+    <result column="PERSON_SEX" jdbcType="VARCHAR" property="personSex" />
+    <result column="PERSON_HEIGHT" jdbcType="VARCHAR" property="personHeight" />
+    <result column="PERSON_RESIDENCE_ADDRESS" jdbcType="VARCHAR" property="personResidenceAddress" />
+    <result column="PERSON_CURRENT_ADDRESS" jdbcType="VARCHAR" property="personCurrentAddress" />
+    <result column="PERSON_CERTIFICATE_TYPE" jdbcType="VARCHAR" property="personCertificateType" />
+    <result column="PERSON_CERTIFICATE_NUMBER" jdbcType="VARCHAR" property="personCertificateNumber" />
+    <result column="PERSON_RELATIONSHIP" jdbcType="VARCHAR" property="personRelationship" />
+    <result column="PERSON_TYPE" jdbcType="VARCHAR" property="personType" />
+    <result column="PERSON_ISKEY" jdbcType="VARCHAR" property="personIskey" />
+    <result column="PERSON_SERVICE_AREA" jdbcType="VARCHAR" property="personServiceArea" />
+    <result column="PERSON_LXFS" jdbcType="VARCHAR" property="personPhoneNumber" />
+    <result column="PERSON_CREATE_DATE" jdbcType="TIMESTAMP" property="personCreateDate" />
+    <result column="PERSON_AVATAR" jdbcType="VARCHAR" property="personAvatar"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    a.PERSON_ID, PERSON_NAME, PERSON_NATION, PERSON_SEX, PERSON_HEIGHT, PERSON_RESIDENCE_ADDRESS, 
+    PERSON_CURRENT_ADDRESS, PERSON_CERTIFICATE_TYPE, PERSON_CERTIFICATE_NUMBER, PERSON_RELATIONSHIP, 
+    PERSON_TYPE, PERSON_ISKEY, PERSON_SERVICE_AREA, PERSON_LXFS, PERSON_CREATE_DATE,PERSON_AVATAR
+  </sql>
+  
+   <select id="selectCountByHouse" resultType="java.lang.Integer">
+    select 
+    count(1)
+    from  HOUSE_PERSON a 
+    left join  PERSON b on a.person_id=b.person_id
+    <where>
+    <if test="personType!=null">
+      and PERSON_TYPE = #{personType,jdbcType=VARCHAR}
+    </if>
+    <if test="personIskey!=null">
+      and PERSON_ISKEY = #{personIskey,jdbcType=VARCHAR}
+    </if>
+    <if test="houseId!=null">
+      and HOUSE_ID= #{houseId,jdbcType=VARCHAR}
+    </if>
+    </where>
+ 
+  </select>
+  
+  <select id="selectByHouseId" resultMap="domainResultMap">
+    select 
+   <include refid="Base_Column_List" />
+    from  HOUSE_PERSON b 
+    left join  PERSON a on a.person_id=b.person_id
+    
+    where HOUSE_ID= #{houseId,jdbcType=VARCHAR}
+   
+  </select>
+  
+  <select id="selectByBungalowId" resultMap="domainResultMap">
+    select 
+   <include refid="Base_Column_List" />
+    from  BUNGALOW_PERSON b 
+    left join  PERSON a on a.person_id=b.person_id
+    
+    where BUILDING_ID= #{buildingId,jdbcType=VARCHAR}
+   
+  </select>
+  
+   <select id="selectByPrimaryKey"  resultMap="domainResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from PERSON a
+    where PERSON_ID = #{personId,jdbcType=VARCHAR}
+  </select>
+  
+  
+  
+   <select id="listByConditon" resultMap="domainResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from PERSON a
+    <where>
+       <if test="personType!=null and personType!=''">
+      and PERSON_TYPE = #{personType,jdbcType=VARCHAR}
+    </if>
+    <if test="personIskey!=null and personIskey!='' ">
+      and PERSON_ISKEY = #{personIskey,jdbcType=VARCHAR}
+    </if>
+    
+    <if test="personName!=null and personName!='' ">
+      and PERSON_NAME = #{personName,jdbcType=VARCHAR}
+    </if>
+    
+    <if test="personSex!=null and personSex!=''">
+      and PERSON_SEX = #{personSex,jdbcType=VARCHAR}
+    </if>
+    
+    <if test="personCertificateNumber !=null and personCertificateNumber !=''">
+      and PERSON_CERTIFICATE_NUMBER = #{personCertificateNumber,jdbcType=VARCHAR}
+    </if>
+    
+    <if test="personPhoneNumber !=null and personPhoneNumber !=''">
+      and PERSON_LXFS= #{personPhoneNumber,jdbcType=VARCHAR}
+    </if>
+    
+     <if test="personServiceArea !=null and personServiceArea !=''">
+      and PERSON_SERVICE_AREA= #{personServiceArea,jdbcType=VARCHAR}
+    </if>
+    
+    </where>
+  </select>
+  
+  
+  
+  
+  
+  
+  
+ 
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from PERSON
+    where PERSON_ID = #{personId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.kaituo.communitypolicing.business.model.Person">
+    insert into PERSON (PERSON_ID, PERSON_NAME, PERSON_NATION, 
+      PERSON_SEX, PERSON_HEIGHT, PERSON_RESIDENCE_ADDRESS, 
+      PERSON_CURRENT_ADDRESS, PERSON_CERTIFICATE_TYPE, 
+      PERSON_CERTIFICATE_NUMBER, PERSON_RELATIONSHIP, 
+      PERSON_TYPE, PERSON_ISKEY, PERSON_SERVICE_AREA, 
+      PERSON_LXFS, PERSON_CREATE_DATE)
+    values (#{personId,jdbcType=VARCHAR}, #{personName,jdbcType=VARCHAR}, #{personNation,jdbcType=VARCHAR}, 
+      #{personSex,jdbcType=VARCHAR}, #{personHeight,jdbcType=VARCHAR}, #{personResidenceAddress,jdbcType=VARCHAR}, 
+      #{personCurrentAddress,jdbcType=VARCHAR}, #{personCertificateType,jdbcType=VARCHAR}, 
+      #{personCertificateNumber,jdbcType=VARCHAR}, #{personRelationship,jdbcType=VARCHAR}, 
+      #{personType,jdbcType=VARCHAR}, #{personIskey,jdbcType=VARCHAR}, #{personServiceArea,jdbcType=VARCHAR}, 
+      #{personLxfs,jdbcType=VARCHAR}, #{personCreateDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.kaituo.communitypolicing.business.model.Person">
+    insert into PERSON
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="personId != null">
+        PERSON_ID,
+      </if>
+      <if test="personName != null">
+        PERSON_NAME,
+      </if>
+      <if test="personNation != null">
+        PERSON_NATION,
+      </if>
+      <if test="personSex != null">
+        PERSON_SEX,
+      </if>
+      <if test="personHeight != null">
+        PERSON_HEIGHT,
+      </if>
+      <if test="personResidenceAddress != null">
+        PERSON_RESIDENCE_ADDRESS,
+      </if>
+      <if test="personCurrentAddress != null">
+        PERSON_CURRENT_ADDRESS,
+      </if>
+      <if test="personCertificateType != null">
+        PERSON_CERTIFICATE_TYPE,
+      </if>
+      <if test="personCertificateNumber != null">
+        PERSON_CERTIFICATE_NUMBER,
+      </if>
+      <if test="personRelationship != null">
+        PERSON_RELATIONSHIP,
+      </if>
+      <if test="personType != null">
+        PERSON_TYPE,
+      </if>
+      <if test="personIskey != null">
+        PERSON_ISKEY,
+      </if>
+      <if test="personServiceArea != null">
+        PERSON_SERVICE_AREA,
+      </if>
+      <if test="personLxfs != null">
+        PERSON_LXFS,
+      </if>
+      <if test="personCreateDate != null">
+        PERSON_CREATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="personId != null">
+        #{personId,jdbcType=VARCHAR},
+      </if>
+      <if test="personName != null">
+        #{personName,jdbcType=VARCHAR},
+      </if>
+      <if test="personNation != null">
+        #{personNation,jdbcType=VARCHAR},
+      </if>
+      <if test="personSex != null">
+        #{personSex,jdbcType=VARCHAR},
+      </if>
+      <if test="personHeight != null">
+        #{personHeight,jdbcType=VARCHAR},
+      </if>
+      <if test="personResidenceAddress != null">
+        #{personResidenceAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="personCurrentAddress != null">
+        #{personCurrentAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="personCertificateType != null">
+        #{personCertificateType,jdbcType=VARCHAR},
+      </if>
+      <if test="personCertificateNumber != null">
+        #{personCertificateNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="personRelationship != null">
+        #{personRelationship,jdbcType=VARCHAR},
+      </if>
+      <if test="personType != null">
+        #{personType,jdbcType=VARCHAR},
+      </if>
+      <if test="personIskey != null">
+        #{personIskey,jdbcType=VARCHAR},
+      </if>
+      <if test="personServiceArea != null">
+        #{personServiceArea,jdbcType=VARCHAR},
+      </if>
+      <if test="personLxfs != null">
+        #{personLxfs,jdbcType=VARCHAR},
+      </if>
+      <if test="personCreateDate != null">
+        #{personCreateDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.kaituo.communitypolicing.business.model.Person">
+    update PERSON
+    <set>
+      <if test="personName != null">
+        PERSON_NAME = #{personName,jdbcType=VARCHAR},
+      </if>
+      <if test="personNation != null">
+        PERSON_NATION = #{personNation,jdbcType=VARCHAR},
+      </if>
+      <if test="personSex != null">
+        PERSON_SEX = #{personSex,jdbcType=VARCHAR},
+      </if>
+      <if test="personHeight != null">
+        PERSON_HEIGHT = #{personHeight,jdbcType=VARCHAR},
+      </if>
+      <if test="personResidenceAddress != null">
+        PERSON_RESIDENCE_ADDRESS = #{personResidenceAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="personCurrentAddress != null">
+        PERSON_CURRENT_ADDRESS = #{personCurrentAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="personCertificateType != null">
+        PERSON_CERTIFICATE_TYPE = #{personCertificateType,jdbcType=VARCHAR},
+      </if>
+      <if test="personCertificateNumber != null">
+        PERSON_CERTIFICATE_NUMBER = #{personCertificateNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="personRelationship != null">
+        PERSON_RELATIONSHIP = #{personRelationship,jdbcType=VARCHAR},
+      </if>
+      <if test="personType != null">
+        PERSON_TYPE = #{personType,jdbcType=VARCHAR},
+      </if>
+      <if test="personIskey != null">
+        PERSON_ISKEY = #{personIskey,jdbcType=VARCHAR},
+      </if>
+      <if test="personServiceArea != null">
+        PERSON_SERVICE_AREA = #{personServiceArea,jdbcType=VARCHAR},
+      </if>
+      <if test="personLxfs != null">
+        PERSON_LXFS = #{personLxfs,jdbcType=VARCHAR},
+      </if>
+      <if test="personCreateDate != null">
+        PERSON_CREATE_DATE = #{personCreateDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where PERSON_ID = #{personId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.kaituo.communitypolicing.business.model.Person">
+    update PERSON
+    set PERSON_NAME = #{personName,jdbcType=VARCHAR},
+      PERSON_NATION = #{personNation,jdbcType=VARCHAR},
+      PERSON_SEX = #{personSex,jdbcType=VARCHAR},
+      PERSON_HEIGHT = #{personHeight,jdbcType=VARCHAR},
+      PERSON_RESIDENCE_ADDRESS = #{personResidenceAddress,jdbcType=VARCHAR},
+      PERSON_CURRENT_ADDRESS = #{personCurrentAddress,jdbcType=VARCHAR},
+      PERSON_CERTIFICATE_TYPE = #{personCertificateType,jdbcType=VARCHAR},
+      PERSON_CERTIFICATE_NUMBER = #{personCertificateNumber,jdbcType=VARCHAR},
+      PERSON_RELATIONSHIP = #{personRelationship,jdbcType=VARCHAR},
+      PERSON_TYPE = #{personType,jdbcType=VARCHAR},
+      PERSON_ISKEY = #{personIskey,jdbcType=VARCHAR},
+      PERSON_SERVICE_AREA = #{personServiceArea,jdbcType=VARCHAR},
+      PERSON_LXFS = #{personLxfs,jdbcType=VARCHAR},
+      PERSON_CREATE_DATE = #{personCreateDate,jdbcType=TIMESTAMP}
+    where PERSON_ID = #{personId,jdbcType=VARCHAR}
+  </update>
+</mapper>

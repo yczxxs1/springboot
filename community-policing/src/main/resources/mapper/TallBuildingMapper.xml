@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kaituo.communitypolicing.business.dao.TallBuildingMapper">
+  <resultMap id="BuildingResultMap" type="com.kaituo.communitypolicing.business.domain.TallBuilding">
+    <result column="BUILDING_ID" jdbcType="VARCHAR" property="buildingId" />
+    <result column="BUILDING_NAME" jdbcType="VARCHAR" property="buildingName" />
+    <result column="BUILDING_TYPE" jdbcType="VARCHAR" property="buildingType" />
+    <collection property="units" column="BUILDING_ID" select="selectUnitByBuildingId" fetchType="lazy"/>
+    
+  </resultMap>
+  
+  <resultMap type="com.kaituo.communitypolicing.business.domain.Unit" id="UnitResultMap">
+  
+    <id column="UNIT_ID" jdbcType="VARCHAR" property="unitId" />
+    <result column="UNIT_NAME" jdbcType="VARCHAR" property="unitName" />
+    <collection property="floors" column="UNIT_ID" fetchType="lazy" select="selectFloorByUnitId"/> 
+  </resultMap>
+  
+   <resultMap type="com.kaituo.communitypolicing.business.domain.Floor" id="FloorResultMap">
+  
+    <id column="FLOOR_ID" jdbcType="VARCHAR" property="floorId" />
+    <result column="FLOOR_NAME" jdbcType="VARCHAR" property="floorName" />
+    <collection property="houses" column="FLOOR_ID" fetchType="lazy" select="com.kaituo.communitypolicing.business.dao.HouseMapper.selectHouseByFloorId"/>
+  </resultMap>
+  
+  <select id="selectTallBuildingById" resultMap="BuildingResultMap">
+ <![CDATA[ 
+     select 
+    BUILDING_ID, BUILDING_NAME, BUILDING_TYPE
+    from BUILDING
+    where BUILDING_TYPE ='1'
+    
+    and BUILDING_ID = #{buildingId,jdbcType=VARCHAR}
+]]>
+  
+  </select>
+  
+  
+  <select id="selectUnitByBuildingId" resultMap="UnitResultMap">
+  SELECT UNIT_ID,UNIT_NAME FROM TALL_BUILDING WHERE BUILDING_ID=#{buildingId,jdbcType=VARCHAR}
+  </select>
+  
+  
+  <select id="selectFloorByUnitId" resultMap="FloorResultMap">
+  SELECT FLOOR_ID, FLOOR_NAME FROM FLOOR WHERE UNIT_ID=#{unitId,jdbcType=VARCHAR}
+  </select>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <insert id="insert" parameterType="com.kaituo.communitypolicing.business.model.TallBuilding">
+    insert into TALL_BUILDING (BUILDING_ID, UNIT_ID, UNIT_NAME
+      )
+    values (#{buildingId,jdbcType=VARCHAR}, #{unitId,jdbcType=VARCHAR}, #{unitName,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.kaituo.communitypolicing.business.model.TallBuilding">
+    insert into TALL_BUILDING
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="buildingId != null">
+        BUILDING_ID,
+      </if>
+      <if test="unitId != null">
+        UNIT_ID,
+      </if>
+      <if test="unitName != null">
+        UNIT_NAME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="buildingId != null">
+        #{buildingId,jdbcType=VARCHAR},
+      </if>
+      <if test="unitId != null">
+        #{unitId,jdbcType=VARCHAR},
+      </if>
+      <if test="unitName != null">
+        #{unitName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

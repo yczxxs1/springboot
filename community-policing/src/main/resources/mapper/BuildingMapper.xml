@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kaituo.communitypolicing.business.dao.BuildingMapper">
+  <resultMap id="BaseResultMap" type="com.kaituo.communitypolicing.business.model.Building">
+    <id column="BUILDING_ID" jdbcType="VARCHAR" property="buildingId" />
+    <result column="BUILDING_NAME" jdbcType="VARCHAR" property="buildingName" />
+    <result column="BUILDING_TYPE" jdbcType="VARCHAR" property="buildingType" />
+    <result column="BUILDING_SJID" jdbcType="VARCHAR" property="buildingSjid" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.kaituo.communitypolicing.business.model.Building">
+    <result column="BUILDING_ZB" jdbcType="CLOB" property="buildingZb" />
+  </resultMap>
+  
+  <resultMap id="DomainResultMap" type="com.kaituo.communitypolicing.business.domain.Building">
+    <id column="BUILDING_ID" jdbcType="VARCHAR" property="buildingId" />
+    <result column="BUILDING_NAME" jdbcType="VARCHAR" property="buildingName" />
+    <result column="BUILDING_TYPE" jdbcType="VARCHAR" property="buildingType" />
+    <result column="LONGITUDE"  jdbcType="FLOAT" property="coordinate.longitude"/>
+    <result column="LATITUDE"    jdbcType="FLOAT" property="coordinate.latitude"/>
+  </resultMap>
+  
+  
+  <resultMap id="BuildingListVo" type="com.kaituo.communitypolicing.business.vo.BuildingListVo">
+    <id column="BUILDING_ID" jdbcType="VARCHAR" property="buildingId" />
+    <result column="BUILDING_NAME" jdbcType="VARCHAR" property="buildingName" />
+    <result column="BUILDING_TYPE" jdbcType="VARCHAR" property="buildingType" />
+    <result column="DISTANCE"    jdbcType="INTEGER" property="distance"/>
+  </resultMap>
+  
+  
+  <sql id="Base_Column_List">
+    BUILDING_ID, BUILDING_NAME, BUILDING_TYPE, BUILDING_SJID
+  </sql>
+  <sql id="Blob_Column_List">
+    BUILDING_ZB
+  </sql>
+  
+  <select id="selectListByCoordinate" resultMap="BuildingListVo">
+  <![CDATA[ 
+ select * from (select 
+      t.*,
+    6366000*acos(
+      cos(#{latitude,jdbcType=DOUBLE}/57.29400418246231)
+      *cos(#{longitude,jdbcType=DOUBLE}/57.29400418246231)
+      *cos(latitude/57.29400418246231) 
+      *cos(longitude/57.29400418246231)+
+      
+      cos(#{latitude,jdbcType=DOUBLE}/57.29400418246231)
+      *sin(#{longitude,jdbcType=DOUBLE}/57.29400418246231)
+      *cos(latitude/57.29400418246231) 
+      *sin(longitude/57.29400418246231)+
+      
+      sin(#{latitude,jdbcType=DOUBLE}/57.29400418246231)*sin(latitude/57.29400418246231)) as distance 
+     from (select 
+tb.building_id,
+tb.building_name,
+tb.building_type,
+CAST(CAST(tb.latitude AS VARCHAR2(200)) AS BINARY_DOUBLE) as latitude , 
+CAST(CAST(tb.longitude AS VARCHAR2(200)) AS BINARY_DOUBLE) as longitude
+ from (select 
+    building_id,
+    building_name,
+    building_type,
+    REGEXP_SUBSTR(building_zb, '[^,]+', 1, 2) AS latitude,
+    REGEXP_SUBSTR(building_zb, '[^,]+', 1, 1) AS longitude from building) tb) t) a where distance<1000 order by distance desc
+     ]]>
+  </select>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from BUILDING
+    where BUILDING_ID = #{buildingId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from BUILDING
+    where BUILDING_ID = #{buildingId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.kaituo.communitypolicing.business.model.Building">
+    insert into BUILDING (BUILDING_ID, BUILDING_NAME, BUILDING_TYPE, 
+      BUILDING_SJID, BUILDING_ZB)
+    values (#{buildingId,jdbcType=VARCHAR}, #{buildingName,jdbcType=VARCHAR}, #{buildingType,jdbcType=VARCHAR}, 
+      #{buildingSjid,jdbcType=VARCHAR}, #{buildingZb,jdbcType=CLOB})
+  </insert>
+  <insert id="insertSelective" parameterType="com.kaituo.communitypolicing.business.model.Building">
+    insert into BUILDING
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="buildingId != null">
+        BUILDING_ID,
+      </if>
+      <if test="buildingName != null">
+        BUILDING_NAME,
+      </if>
+      <if test="buildingType != null">
+        BUILDING_TYPE,
+      </if>
+      <if test="buildingSjid != null">
+        BUILDING_SJID,
+      </if>
+      <if test="buildingZb != null">
+        BUILDING_ZB,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="buildingId != null">
+        #{buildingId,jdbcType=VARCHAR},
+      </if>
+      <if test="buildingName != null">
+        #{buildingName,jdbcType=VARCHAR},
+      </if>
+      <if test="buildingType != null">
+        #{buildingType,jdbcType=VARCHAR},
+      </if>
+      <if test="buildingSjid != null">
+        #{buildingSjid,jdbcType=VARCHAR},
+      </if>
+      <if test="buildingZb != null">
+        #{buildingZb,jdbcType=CLOB},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.kaituo.communitypolicing.business.model.Building">
+    update BUILDING
+    <set>
+      <if test="buildingName != null">
+        BUILDING_NAME = #{buildingName,jdbcType=VARCHAR},
+      </if>
+      <if test="buildingType != null">
+        BUILDING_TYPE = #{buildingType,jdbcType=VARCHAR},
+      </if>
+      <if test="buildingSjid != null">
+        BUILDING_SJID = #{buildingSjid,jdbcType=VARCHAR},
+      </if>
+      <if test="buildingZb != null">
+        BUILDING_ZB = #{buildingZb,jdbcType=CLOB},
+      </if>
+    </set>
+    where BUILDING_ID = #{buildingId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.kaituo.communitypolicing.business.model.Building">
+    update BUILDING
+    set BUILDING_NAME = #{buildingName,jdbcType=VARCHAR},
+      BUILDING_TYPE = #{buildingType,jdbcType=VARCHAR},
+      BUILDING_SJID = #{buildingSjid,jdbcType=VARCHAR},
+      BUILDING_ZB = #{buildingZb,jdbcType=CLOB}
+    where BUILDING_ID = #{buildingId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.kaituo.communitypolicing.business.model.Building">
+    update BUILDING
+    set BUILDING_NAME = #{buildingName,jdbcType=VARCHAR},
+      BUILDING_TYPE = #{buildingType,jdbcType=VARCHAR},
+      BUILDING_SJID = #{buildingSjid,jdbcType=VARCHAR}
+    where BUILDING_ID = #{buildingId,jdbcType=VARCHAR}
+  </update>
+</mapper>

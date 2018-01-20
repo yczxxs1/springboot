@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kaituo.communitypolicing.business.dao.BungalowPersonMapper">
+  <resultMap id="BaseResultMap" type="com.kaituo.communitypolicing.business.model.BungalowPerson">
+    <result column="BUILDING_ID" jdbcType="VARCHAR" property="buildingId" />
+    <result column="PERSON_ID" jdbcType="VARCHAR" property="personId" />
+  </resultMap>
+  <insert id="insert" parameterType="com.kaituo.communitypolicing.business.model.BungalowPerson">
+    insert into BUNGALOW_PERSON (BUILDING_ID, PERSON_ID)
+    values (#{buildingId,jdbcType=VARCHAR}, #{personId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.kaituo.communitypolicing.business.model.BungalowPerson">
+    insert into BUNGALOW_PERSON
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="buildingId != null">
+        BUILDING_ID,
+      </if>
+      <if test="personId != null">
+        PERSON_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="buildingId != null">
+        #{buildingId,jdbcType=VARCHAR},
+      </if>
+      <if test="personId != null">
+        #{personId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

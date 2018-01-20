@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kaituo.communitypolicing.business.dao.HouseMapper">
+	<resultMap id="DomainBaseResultMap" type="com.kaituo.communitypolicing.business.domain.House">
+		<id column="HOUSE_ID" jdbcType="VARCHAR" property="houseId" />
+		<result column="HOUSE_NAME" jdbcType="VARCHAR" property="houseName" />
+		<result column="HOUSE_IMG_URL" jdbcType="CLOB" property="houseImgUrl" />
+		<association property="houseInfo"
+                     javaType="com.kaituo.communitypolicing.business.domain.HouseInfo">
+			<result column="HOUSE_AREA" jdbcType="FLOAT" property="houseArea" />
+			<result column="HOUSE_PURPOSE" jdbcType="VARCHAR" property="housePurpose" />
+			<result column="HOUSE_TYPE" jdbcType="VARCHAR" property="houseType" />
+			<result column="HOUSE_HOLDER" jdbcType="VARCHAR" property="houseHolder" />
+		</association>
+
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		HOUSE_ID, HOUSE_NAME, HOUSE_AREA, HOUSE_PURPOSE, HOUSE_TYPE, HOUSE_HOLDER,
+		FLOOR_ID
+	</sql>
+	<sql id="Blob_Column_List">
+		HOUSE_IMG_URL
+	</sql>
+
+  <select id="selectByHouseId" parameterType="java.lang.String"
+		resultMap="DomainBaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from HOUSE
+		where HOUSE_ID = #{houseId,jdbcType=VARCHAR}
+	</select>
+
+
+
+	<select id="selectHouseByFloorId" resultMap="DomainBaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from HOUSE
+		where FLOOR_ID = #{floorId,jdbcType=VARCHAR}
+	</select>
+
+
+
+
+
+
+
+
+	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from HOUSE
+		where HOUSE_ID = #{houseId,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.kaituo.communitypolicing.business.model.House">
+		insert into HOUSE (HOUSE_ID, HOUSE_NAME, HOUSE_AREA,
+		HOUSE_PURPOSE, HOUSE_TYPE, HOUSE_HOLDER,
+		FLOOR_ID, HOUSE_IMG_URL)
+		values (#{houseId,jdbcType=VARCHAR}, #{houseName,jdbcType=VARCHAR},
+		#{houseArea,jdbcType=FLOAT},
+		#{housePurpose,jdbcType=VARCHAR}, #{houseType,jdbcType=VARCHAR}, #{houseHolder,jdbcType=VARCHAR},
+		#{floorId,jdbcType=VARCHAR}, #{houseImgUrl,jdbcType=CLOB})
+	</insert>
+	<insert id="insertSelective" parameterType="com.kaituo.communitypolicing.business.model.House">
+		insert into HOUSE
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="houseId != null">
+				HOUSE_ID,
+			</if>
+			<if test="houseName != null">
+				HOUSE_NAME,
+			</if>
+			<if test="houseArea != null">
+				HOUSE_AREA,
+			</if>
+			<if test="housePurpose != null">
+				HOUSE_PURPOSE,
+			</if>
+			<if test="houseType != null">
+				HOUSE_TYPE,
+			</if>
+			<if test="houseHolder != null">
+				HOUSE_HOLDER,
+			</if>
+			<if test="floorId != null">
+				FLOOR_ID,
+			</if>
+			<if test="houseImgUrl != null">
+				HOUSE_IMG_URL,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="houseId != null">
+				#{houseId,jdbcType=VARCHAR},
+			</if>
+			<if test="houseName != null">
+				#{houseName,jdbcType=VARCHAR},
+			</if>
+			<if test="houseArea != null">
+				#{houseArea,jdbcType=FLOAT},
+			</if>
+			<if test="housePurpose != null">
+				#{housePurpose,jdbcType=VARCHAR},
+			</if>
+			<if test="houseType != null">
+				#{houseType,jdbcType=VARCHAR},
+			</if>
+			<if test="houseHolder != null">
+				#{houseHolder,jdbcType=VARCHAR},
+			</if>
+			<if test="floorId != null">
+				#{floorId,jdbcType=VARCHAR},
+			</if>
+			<if test="houseImgUrl != null">
+				#{houseImgUrl,jdbcType=CLOB},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.kaituo.communitypolicing.business.model.House">
+		update HOUSE
+		<set>
+			<if test="houseName != null">
+				HOUSE_NAME = #{houseName,jdbcType=VARCHAR},
+			</if>
+			<if test="houseArea != null">
+				HOUSE_AREA = #{houseArea,jdbcType=FLOAT},
+			</if>
+			<if test="housePurpose != null">
+				HOUSE_PURPOSE = #{housePurpose,jdbcType=VARCHAR},
+			</if>
+			<if test="houseType != null">
+				HOUSE_TYPE = #{houseType,jdbcType=VARCHAR},
+			</if>
+			<if test="houseHolder != null">
+				HOUSE_HOLDER = #{houseHolder,jdbcType=VARCHAR},
+			</if>
+			<if test="floorId != null">
+				FLOOR_ID = #{floorId,jdbcType=VARCHAR},
+			</if>
+			<if test="houseImgUrl != null">
+				HOUSE_IMG_URL = #{houseImgUrl,jdbcType=CLOB},
+			</if>
+		</set>
+		where HOUSE_ID = #{houseId,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKeyWithBLOBs" parameterType="com.kaituo.communitypolicing.business.model.House">
+		update HOUSE
+		set HOUSE_NAME = #{houseName,jdbcType=VARCHAR},
+		HOUSE_AREA = #{houseArea,jdbcType=FLOAT},
+		HOUSE_PURPOSE = #{housePurpose,jdbcType=VARCHAR},
+		HOUSE_TYPE = #{houseType,jdbcType=VARCHAR},
+		HOUSE_HOLDER = #{houseHolder,jdbcType=VARCHAR},
+		FLOOR_ID = #{floorId,jdbcType=VARCHAR},
+		HOUSE_IMG_URL = #{houseImgUrl,jdbcType=CLOB}
+		where HOUSE_ID = #{houseId,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.kaituo.communitypolicing.business.model.House">
+		update HOUSE
+		set HOUSE_NAME = #{houseName,jdbcType=VARCHAR},
+		HOUSE_AREA = #{houseArea,jdbcType=FLOAT},
+		HOUSE_PURPOSE = #{housePurpose,jdbcType=VARCHAR},
+		HOUSE_TYPE = #{houseType,jdbcType=VARCHAR},
+		HOUSE_HOLDER = #{houseHolder,jdbcType=VARCHAR},
+		FLOOR_ID = #{floorId,jdbcType=VARCHAR}
+		where HOUSE_ID = #{houseId,jdbcType=VARCHAR}
+	</update>
+</mapper>

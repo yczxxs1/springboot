@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kaituo.communitypolicing.business.dao.FloorMapper">
+  <resultMap id="BaseResultMap" type="com.kaituo.communitypolicing.business.model.Floor">
+    <id column="FLOOR_ID" jdbcType="VARCHAR" property="floorId" />
+    <result column="FLOOR_NAME" jdbcType="VARCHAR" property="floorName" />
+    <result column="UNIT_ID" jdbcType="VARCHAR" property="unitId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    FLOOR_ID, FLOOR_NAME, UNIT_ID
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from FLOOR
+    where FLOOR_ID = #{floorId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from FLOOR
+    where FLOOR_ID = #{floorId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.kaituo.communitypolicing.business.model.Floor">
+    insert into FLOOR (FLOOR_ID, FLOOR_NAME, UNIT_ID
+      )
+    values (#{floorId,jdbcType=VARCHAR}, #{floorName,jdbcType=VARCHAR}, #{unitId,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.kaituo.communitypolicing.business.model.Floor">
+    insert into FLOOR
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="floorId != null">
+        FLOOR_ID,
+      </if>
+      <if test="floorName != null">
+        FLOOR_NAME,
+      </if>
+      <if test="unitId != null">
+        UNIT_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="floorId != null">
+        #{floorId,jdbcType=VARCHAR},
+      </if>
+      <if test="floorName != null">
+        #{floorName,jdbcType=VARCHAR},
+      </if>
+      <if test="unitId != null">
+        #{unitId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.kaituo.communitypolicing.business.model.Floor">
+    update FLOOR
+    <set>
+      <if test="floorName != null">
+        FLOOR_NAME = #{floorName,jdbcType=VARCHAR},
+      </if>
+      <if test="unitId != null">
+        UNIT_ID = #{unitId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where FLOOR_ID = #{floorId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.kaituo.communitypolicing.business.model.Floor">
+    update FLOOR
+    set FLOOR_NAME = #{floorName,jdbcType=VARCHAR},
+      UNIT_ID = #{unitId,jdbcType=VARCHAR}
+    where FLOOR_ID = #{floorId,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,13 @@
+spring:
+  profiles:
+    active:
+    - dev
+
+mybatis:
+  mapper-locations:
+  - classpath:mapper/*.xml
+  
+swagger:
+  title: 社区警务接口文档
+  version: 1.0.0
+  base-package: com.kaituo.communitypolicing   
