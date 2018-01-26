@@ -2,6 +2,7 @@ package com.kaituo.communitypolicing.business.controller;
 
 import java.util.List;
 
+import com.kaituo.communitypolicing.business.exception.BuildingNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +66,7 @@ public class BuildingController {
 	
 	@GetMapping("{buildingId}/units")
 	@ApiOperation(value="查询非独栋建筑物单元信息")
-	public ResultVo<List<UnitBriefVo>> getTallBuildingUnits(@PathVariable String buildingId) throws Exception {
+	public ResultVo<List<UnitBriefVo>> getTallBuildingUnits(@PathVariable String buildingId) throws BuildingNotFoundException {
 		return ResultUtil.success(modelMapper.map(buildingService.getTallBuilding(buildingId), TallBuildingVo.class).getUnits());
 		
 		
@@ -74,9 +75,11 @@ public class BuildingController {
 	@GetMapping("{unitId}/floors")
 	@ApiOperation(value="根据单元查看楼层信息")
 	public ResultVo<List<FloorVo>> listFloors(@PathVariable String unitId){
+
 		List<Floor> floors=buildingService.getFloors(unitId);
 		List<FloorVo> floorVos = modelMapper.map(floors,new TypeToken<List<FloorVo>>() {}.getType());
 		return ResultUtil.success(floorVos);
+
 		
 	}
 	

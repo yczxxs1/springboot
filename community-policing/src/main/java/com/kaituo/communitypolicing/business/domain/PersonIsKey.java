@@ -1,5 +1,8 @@
 package com.kaituo.communitypolicing.business.domain;
 
+/**
+ * 人口是否为重点
+ */
 public enum PersonIsKey {
 	key("1"),
 	notKey("0");
